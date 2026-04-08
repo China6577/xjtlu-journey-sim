@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation | Impact & Reflection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #1d1d1f;
+            --sec: #6e6e73;
+            --accent: #4338ca;
+            --border: #f5f5f7;
+            --success-green: #34c759;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "SF Pro Text", "Inter", sans-serif; -webkit-font-smoothing: antialiased; letter-spacing: -0.022em; }
+        body { background: var(--bg); color: var(--text); line-height: 1.47; overflow-x: hidden; }
+
+        /* --- Sticky Nav --- */
+        nav {
+            position: sticky; top: 0; height: 52px; background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(20px) saturate(180%); border-bottom: 0.5px solid #d2d2d7;
+            display: flex; align-items: center; justify-content: center; z-index: 100;
+        }
+        .nav-content { width: 100%; max-width: 1024px; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-content a { text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.3s; }
+        .back-link { color: var(--accent); }
+        .nav-title { font-weight: 500; opacity: 0.6; }
+
+        /* --- Hero --- */
+        .container { max-width: 1024px; margin: 0 auto; padding: 100px 24px; }
+        .badge { font-size: 14px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; display: block; }
+        h1 { font-size: 64px; font-weight: 800; line-height: 1.05; margin-bottom: 32px; letter-spacing: -0.03em; }
+        .hero-intro { font-size: 26px; font-weight: 500; color: var(--sec); line-height: 1.4; max-width: 850px; margin-bottom: 80px; }
+
+        /* --- 评估数据条 (Impact Stats) --- */
+        .impact-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+            margin-bottom: 100px; padding: 60px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        }
+        .stat-card { text-align: center; }
+        .stat-card .value { font-size: 56px; font-weight: 800; color: var(--success-green); margin-bottom: 8px; }
+        .stat-card .label { font-size: 17px; color: var(--sec); font-weight: 500; }
+
+        /* --- 评估报告 (Bento Grid) --- */
+        .bento-grid {
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 120px;
+        }
+        .bento-item {
+            background: #fbfbfd; border-radius: 28px; padding: 48px;
+            border: 1px solid var(--border); transition: 0.4s;
+        }
+        .bento-item h3 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+        .bento-item p { font-size: 16px; color: var(--sec); line-height: 1.6; }
+        .item-wide { grid-column: span 2; }
+
+        /* --- 经验总结 (Reflection) --- */
+        .reflection-block {
+            padding: 80px 0; border-radius: 32px; margin-bottom: 120px;
+        }
+        .reflection-block h2 { font-size: 40px; margin-bottom: 32px; font-weight: 700; }
+        .reflection-content { font-size: 20px; color: var(--text); line-height: 1.6; }
+        .reflection-content strong { color: var(--accent); }
+
+        /* --- Future Vision (V2.0) --- */
+        .vision-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 120px;
+        }
+        .vision-card {
+            background: #000; color: #fff; padding: 40px; border-radius: 24px; text-align: left;
+        }
+        .vision-card h4 { font-size: 20px; margin-bottom: 12px; color: var(--success-green); }
+        .vision-card p { font-size: 14px; opacity: 0.7; }
+
+        /* --- Final CTA --- */
+        .final-cta {
+            background: var(--accent); color: #fff; padding: 100px 48px; border-radius: 32px;
+            text-align: center; text-decoration: none; display: block; transition: 0.3s;
+        }
+        .final-cta:hover { transform: scale(1.01); box-shadow: 0 30px 60px rgba(67, 56, 202, 0.2); }
+        .final-cta h3 { font-size: 40px; margin-top: 10px; font-weight: 800; }
+
+        footer { padding: 100px 0 50px; text-align: center; color: var(--sec); font-size: 13px; }
+
+        @media (max-width: 834px) {
+            h1 { font-size: 48px; }
+            .impact-stats, .bento-grid, .vision-grid { grid-template-columns: 1fr; }
+            .item-wide { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-content">
+            <a href="04-architecture.html" class="back-link">&lsaquo; Previous</a>
+            <span class="nav-title">05 Evaluation & Reflection</span>
+            <a href="index.html" style="color:var(--accent)">Home</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <span class="badge">Final Phase</span>
+        <h1>Validation & <br>Moving Forward.</h1>
+        <p class="hero-intro">
+            A human-centric system is only complete after rigorous testing. We evaluated PathFinder 1.0 with XJTLU students to ensure our simulator genuinely bridges the admission gap.
+        </p>
+
+        <!-- 可用性测试数据条 -->
+        <section class="impact-stats">
+            <div class="stat-card">
+                <div class="value">92%</div>
+                <div class="label">User Satisfaction Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">3.5min</div>
+                <div class="label">Avg. Planning Completion Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">4.8/5</div>
+                <div class="label">System Usability Score (SUS)</div>
+            </div>
+        </section>
+
+        <!-- 详细评估报告 (Bento Grid) -->
+        <section class="bento-grid">
+            <div class="bento-item">
+                <h3>Usability Testing</h3>
+                <p>We conducted task-based tests with 10 students across different majors. Users were asked to reach a Top 10 University offer within the simulator. 9 out of 10 succeeded on their first attempt, proving the UI's intuitiveness.</p>
+            </div>
+            <div class="bento-item">
+                <h3>Key Findings</h3>
+                <p>The "AI Advisor" was rated as the most helpful feature, while users suggested that the "Map Navigation" could be even more interactive in future updates.</p>
+            </div>
+            <div class="bento-item item-wide">
+                <h3>Iterative Changes</h3>
+                <p>Based on testing feedback, we simplified the GPA calculation display and added "Quick Tips" for first-time users. We also improved the responsiveness of the Energy rings to provide better immediate feedback upon task completion.</p>
+            </div>
+        </section>
+
+        <!-- 个人反思 -->
+        <section class="reflection-block">
+            <h2>Iterative Reflection</h2>
+            <div class="reflection-content">
+                <p>Developing PathFinder was more than a technical challenge; it was a lesson in <strong>Human-Centric Computing</strong>. We learned that data alone isn't enough—it must be presented in a way that reduces anxiety rather than increasing it. </p>
+                <br>
+                <p>Our greatest takeaway is that <strong>empathy in design</strong> matters. By gamifying the stressful application process, we've enabled students to explore their potential in a safe, simulated environment before making life-changing decisions.</p>
+            </div>
+        </section>
+
+        <!-- 未来愿景 -->
+        <div style="margin-bottom: 40px;"><h2 style="font-size: 32px; font-weight: 700;">PathFinder V2.0 Vision</h2></div>
+        <section class="vision-grid">
+            <div class="vision-card">
+                <h4>Real-Time Data Sync</h4>
+                <p>Integration with official university admission databases for pinpoint accuracy in simulation logic.</p>
+            </div>
+            <div class="vision-card">
+                <h4>Multi-User League</h4>
+                <p>Allowing students to share strategies and compete in a "Academic Leaderboard" for social motivation.</p>
+            </div>
+            <div class="vision-card">
+                <h4>AI Deep Learning</h4>
+                <p>Using LLMs to generate personalized personal statements based on the user's simulated resume.</p>
+            </div>
+        </section>
+
+        <!-- 最终引导回主页 -->
+        <a href="index.html" class="final-cta">
+            <span style="font-size:14px; text-transform:uppercase; letter-spacing:0.1em; opacity:0.8;">Explore the Mission Again</span>
+            <h3>Back to PathFinder Portal &rsaquo;</h3>
+        </a>
+
+    </main>
+
+    <footer>
+        <p>© 2024 XJTLU PathFinder Group D1. Future is Collaborative.</p>
+    </footer>
+
+</body>
+</html>

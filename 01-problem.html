@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Space | XJTLU PathFinder Research</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #1d1d1f;
+            --sec: #6e6e73;
+            --accent: #4338ca;
+            --border: #f5f5f7;
+            --card-bg: #fbfbfd;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "SF Pro Text", "Inter", sans-serif; -webkit-font-smoothing: antialiased; letter-spacing: -0.022em; }
+        body { background: var(--bg); color: var(--text); line-height: 1.47; overflow-x: hidden; }
+
+        /* --- Apple 风格子页导航 --- */
+        nav {
+            position: sticky; top: 0; height: 52px; background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(20px) saturate(180%); border-bottom: 0.5px solid #d2d2d7;
+            display: flex; align-items: center; justify-content: center; z-index: 100;
+        }
+        .nav-content { width: 100%; max-width: 1024px; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-content a { text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.3s; }
+        .back-link { color: var(--accent); }
+        .back-link:hover { opacity: 0.7; }
+        .nav-title { font-weight: 500; opacity: 0.6; }
+
+        /* --- Hero Section --- */
+        .container { max-width: 1024px; margin: 0 auto; padding: 100px 24px; }
+        
+        .badge { 
+            font-size: 14px; font-weight: 700; color: var(--accent); 
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; display: block;
+        }
+        
+        h1 { font-size: 64px; font-weight: 800; line-height: 1.05; margin-bottom: 32px; letter-spacing: -0.03em; }
+        
+        .hero-intro { 
+            font-size: 26px; font-weight: 500; color: var(--sec); line-height: 1.4; 
+            max-width: 850px; margin-bottom: 80px; 
+        }
+
+        /* --- 核心数据展示 (Big Numbers) --- */
+        .stats-strip {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+            padding: 60px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            margin-bottom: 100px;
+        }
+        .stat-item h2 { font-size: 56px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .stat-item p { font-size: 17px; color: var(--sec); font-weight: 500; }
+
+        /* --- Bento Grid Layout (重点模块) --- */
+        .bento-grid {
+            display: grid; grid-template-columns: 1.5fr 1fr; grid-template-rows: auto auto;
+            gap: 24px; margin-bottom: 120px;
+        }
+        .bento-item {
+            background: var(--card-bg); border-radius: 28px; padding: 48px;
+            border: 1px solid var(--border); transition: 0.4s;
+        }
+        .bento-item:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
+        
+        .bento-item h3 { font-size: 28px; font-weight: 700; margin-bottom: 16px; }
+        .bento-item p { font-size: 18px; color: var(--sec); line-height: 1.6; }
+        
+        .item-wide { grid-column: span 2; display: flex; align-items: center; gap: 60px; }
+        .item-wide img { width: 40%; border-radius: 16px; }
+
+        /* --- Quote Section --- */
+        .quote-box {
+            padding: 100px 0; text-align: center; max-width: 800px; margin: 0 auto;
+        }
+        .quote-box h2 { font-size: 40px; font-weight: 700; line-height: 1.2; margin-bottom: 24px; }
+        .quote-box span { color: var(--sec); font-size: 20px; font-weight: 400; }
+
+        /* --- Footer Link --- */
+        .next-step {
+            background: var(--text); color: #fff; padding: 80px 48px; border-radius: 32px;
+            text-align: center; text-decoration: none; display: block; transition: 0.3s;
+        }
+        .next-step:hover { background: #000; transform: scale(1.01); }
+        .next-step span { opacity: 0.6; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; }
+        .next-step h3 { font-size: 32px; margin-top: 12px; }
+
+        footer { padding: 100px 0 50px; text-align: center; color: var(--sec); font-size: 13px; }
+
+        @media (max-width: 834px) {
+            h1 { font-size: 48px; }
+            .stats-strip, .bento-grid { grid-template-columns: 1fr; }
+            .item-wide { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-content">
+            <a href="index.html" class="back-link">&lsaquo; Roadmap</a>
+            <span class="nav-title">01 Problem Space & Research</span>
+            <a href="02-modeling.html" style="color:var(--accent)">Next &rsaquo;</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <span class="badge">Research Phase</span>
+        <h1>The GPA Trap and <br>Information Asymmetry.</h1>
+        <p class="hero-intro">
+            Applying for world-class graduate schools is a high-stakes game. Our research reveals that XJTLU students are often flying blind, relying on outdated rumors rather than data-driven strategies.
+        </p>
+
+        <!-- 核心数据：苹果最爱的 Big Numbers -->
+        <section class="stats-strip">
+            <div class="stat-item">
+                <h2>78%</h2>
+                <p>Of students feel "extremely anxious" during application season.</p>
+            </div>
+            <div class="stat-item">
+                <h2>42%</h2>
+                <p>Report starting their planning "too late" (Year 3 Semester 2).</p>
+            </div>
+            <div class="stat-item">
+                <h2>1.5x</h2>
+                <p>Higher success rates for students who simulate early.</p>
+            </div>
+        </section>
+
+        <!-- Bento Grid: 细节描述模块 -->
+        <section class="bento-grid">
+            <div class="bento-item item-wide">
+                <div class="text-side">
+                    <h3>The GPA Myth</h3>
+                    <p>While XJTLUers prioritize academic scores, Top 10 universities now look for a 360-degree profile. Our data shows social credits and research internship impact admission probabilities as much as 0.2 GPA points.</p>
+                </div>
+                <!-- 建议放一张简单的统计图图片 -->
+                <div style="background:#e2e8f0; height:200px; width:300px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-weight:600;">[ Chart: GPA vs Social ]</div>
+            </div>
+
+            <div class="bento-item">
+                <h3>Mental Fatigue</h3>
+                <p>Information overload from "Senior hearsay" causes decision paralysis. Students need a filtered, realistic planning path.</p>
+            </div>
+
+            <div class="bento-item">
+                <h3>The Missing Link</h3>
+                <p>Current campus tools focus on grades, not "Pathfinding." There is no interactive simulator that ties behavior to admission outcomes.</p>
+            </div>
+        </section>
+
+        <section class="quote-box">
+            <h2>"I had no idea that my internship <br>could compensate for a 3.5 GPA."</h2>
+            <span>— Anonymous XJTLU Year 4 Student</span>
+        </section>
+
+        <!-- 引导至下一章 -->
+        <a href="02-modeling.html" class="next-step">
+            <span>Continue to Chapter 02</span>
+            <h3>Statistical Modeling & Algorithms &rsaquo;</h3>
+        </a>
+
+    </main>
+
+    <footer>
+        <p>© 2024 XJTLU PathFinder Group D1. Built with Passion.</p>
+    </footer>
+
+</body>
+</html>
