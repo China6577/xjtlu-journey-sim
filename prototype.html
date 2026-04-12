@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prototype - XJTLU Journey Simulator</title>
+
+    <!-- Tailwind CSS (Play CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind 主题扩展：注入西浦蓝与亮黄色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 西浦蓝
+                        'xjtlu-navy': '#003366',
+                        'xjtlu-blue': '#004B9B',
+                        'xjtlu-light': '#1A6DC2',
+                        // 亮黄（高亮 / 警告）
+                        'xjtlu-yellow': '#FFD700',
+                        'xjtlu-amber': '#FFC200',
+                        // 辅助色
+                        'xjtlu-red': '#D93025',
+                        'xjtlu-green': '#1E8A44',
+                        'xjtlu-gray': '#6B7280',
+                    },
+                    fontFamily: {
+                        sans: [
+                            '"Noto Sans SC"',
+                            '"PingFang SC"',
+                            '"Microsoft YaHei"',
+                            'ui-sans-serif',
+                            'system-ui',
+                            'sans-serif',
+                        ],
+                    },
+                    boxShadow: {
+                        'hotspot-active': '0 0 0 4px rgba(0, 75, 155, 0.5)',
+                        'hotspot-warn': '0 0 0 4px rgba(217, 48, 37, 0.5)',
+                    },
+                    keyframes: {
+                        'float-up': {
+                            '0%': { opacity: '1', transform: 'translateY(0px)' },
+                            '100%': { opacity: '0', transform: 'translateY(-48px)' },
+                        },
+                        'danger-pulse': {
+                            '0%, 100%': { 'box-shadow': 'inset 0 0 0px rgba(217,48,37,0)' },
+                            '50%': { 'box-shadow': 'inset 0 0 60px rgba(217,48,37,0.55)' },
+                        },
+                        'stat-bump': {
+                            '0%': { transform: 'scale(1)' },
+                            '40%': { transform: 'scale(1.18)' },
+                            '100%': { transform: 'scale(1)' },
+                        },
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0px)' },
+                        },
+                        'ripple': {
+                            '0%': { transform: 'scale(0)', opacity: '0.6' },
+                            '100%': { transform: 'scale(4)', opacity: '0' },
+                        },
+                    },
+                    animation: {
+                        'float-up': 'float-up 1.2s ease-out forwards',
+                        'danger-pulse': 'danger-pulse 1s ease-in-out infinite',
+                        'stat-bump': 'stat-bump 0.3s ease-out',
+                        'fade-in': 'fade-in 0.4s ease-out',
+                        'ripple': 'ripple 0.6s ease-out',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Google Fonts：Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- 项目全局样式 -->
+    <style>
+        /* 基础重置 */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        /* 可复用按钮组件 */
+        .xjtlu-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+            border: 2.5px solid transparent;
+            cursor: pointer;
+            transition: background-color 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.1s ease,
+                box-shadow 0.15s ease;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .xjtlu-btn:active {
+            transform: scale(0.96);
+        }
+
+        .xjtlu-btn--primary {
+            background-color: #004B9B;
+            color: #ffffff;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--primary:hover {
+            background-color: #003366;
+            border-color: #003366;
+            box-shadow: 0 4px 14px rgba(0, 75, 155, 0.35);
+        }
+
+        .xjtlu-btn--secondary {
+            background-color: transparent;
+            color: #004B9B;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--secondary:hover {
+            background-color: rgba(0, 75, 155, 0.08);
+        }
+
+        .xjtlu-btn--ghost {
+            background-color: transparent;
+            color: #6B7280;
+            border-color: transparent;
+        }
+
+        .xjtlu-btn--ghost:hover {
+            background-color: rgba(107, 114, 128, 0.1);
+            color: #374151;
+        }
+
+        /* 卡片样式 */
+        .summary-card {
+            background: #ffffff;
+            border: 2.5px solid #003366;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 51, 102, 0.12);
+        }
+
+        /* 标签样式 */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tag-badge--blue {
+            background-color: rgba(0, 75, 155, 0.1);
+            color: #004B9B;
+            border: 1px solid rgba(0, 75, 155, 0.2);
+        }
+
+        .tag-badge--yellow {
+            background-color: rgba(255, 194, 0, 0.1);
+            color: #FFC200;
+            border: 1px solid rgba(255, 194, 0, 0.2);
+        }
+
+        .tag-badge--red {
+            background-color: rgba(217, 48, 37, 0.1);
+            color: #D93025;
+            border: 1px solid rgba(217, 48, 37, 0.2);
+        }
+
+        /* 地图标记样式 */
+        .map-pin {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.2s ease;
+        }
+
+        .map-pin--action {
+            background-color: #004B9B;
+            color: white;
+        }
+
+        .map-pin--info {
+            background-color: #6B7280;
+            color: white;
+        }
+
+        .map-pin__icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .map-pin__label {
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+
+        /* 动画 */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fade-in 0.35s ease-out both;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .map-pin {
+                width: 28px;
+                height: 28px;
+            }
+
+            .map-pin__icon {
+                width: 14px;
+                height: 14px;
+            }
+
+            .map-pin__label {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+    <!-- 导航栏 -->
+    <nav class="bg-xjtlu-navy text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                    <h1 class="text-xl font-bold">XJTLU Journey Simulator</h1>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="index.html" class="hover:text-xjtlu-yellow transition-colors">Overview</a>
+                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Survey</a>
+                    <a href="personas.html" class="hover:text-xjtlu-yellow transition-colors">Personas</a>
+                    <a href="gameplay.html" class="hover:text-xjtlu-yellow transition-colors">Gameplay</a>
+                    <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 项目原型 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Project Prototype</h2>
+            <div class="max-w-6xl mx-auto">
+                <!-- 主菜单 -->
+                <div class="summary-card fade-in mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Main Menu</h3>
+                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                        <div
+                            class="w-full h-[400px] bg-white rounded-lg flex items-center justify-center relative overflow-hidden">
+                            <!-- 背景装饰 -->
+                            <div
+                                class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-xjtlu-navy opacity-[0.04] pointer-events-none">
+                            </div>
+                            <div
+                                class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-xjtlu-blue opacity-[0.04] pointer-events-none">
+                            </div>
+
+                            <!-- 主内容区 -->
+                            <div
+                                class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-12 md:gap-20 px-8 w-full max-w-4xl">
+                                <!-- 左栏：吉祥物 -->
+                                <div class="flex flex-col items-center gap-4">
+                                    <div class="w-44 h-44 drop-shadow-lg">
+                                        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img"
+                                            aria-label="疲惫白鹅吉祥物" style="width:100%;height:100%;">
+                                            <ellipse cx="60" cy="78" rx="30" ry="28" fill="#F0F4FF" stroke="#003366"
+                                                stroke-width="3.5" stroke-linecap="round" />
+                                            <circle cx="60" cy="38" r="20" fill="#F0F4FF" stroke="#003366"
+                                                stroke-width="3.5" />
+                                            <rect x="50" y="54" width="20" height="8" fill="#F0F4FF" stroke="none" />
+                                            <path d="M72 38 L84 35 L72 42 Z" fill="#FFC200" stroke="#003366"
+                                                stroke-width="2" stroke-linejoin="round" />
+                                            <ellipse cx="53" cy="36" rx="5" ry="3.5" fill="#003366" opacity="0.18" />
+                                            <ellipse cx="67" cy="36" rx="5" ry="3.5" fill="#003366" opacity="0.18" />
+                                            <circle cx="53" cy="36" r="2.5" fill="#003366" />
+                                            <circle cx="54" cy="35" r="0.8" fill="white" />
+                                            <circle cx="67" cy="36" r="2.5" fill="#003366" />
+                                            <circle cx="68" cy="35" r="0.8" fill="white" />
+                                            <path d="M49 30 Q53 32 57 30" stroke="#003366" stroke-width="2.5"
+                                                fill="none" stroke-linecap="round" />
+                                            <path d="M63 30 Q67 32 71 30" stroke="#003366" stroke-width="2.5"
+                                                fill="none" stroke-linecap="round" />
+                                            <path d="M42 65 Q60 60 78 65" stroke="#004B9B" stroke-width="3" fill="none"
+                                                stroke-linecap="round" />
+                                            <path d="M30 75 Q20 68 24 58 Q32 65 40 72" fill="#E8EFFF" stroke="#003366"
+                                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M90 75 Q100 68 96 58 Q88 65 80 72" fill="#E8EFFF" stroke="#003366"
+                                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M50 104 L46 112 M46 112 L42 115 M46 112 L50 115" stroke="#FFC200"
+                                                stroke-width="3" fill="none" stroke-linecap="round" />
+                                            <path d="M70 104 L74 112 M74 112 L70 115 M74 112 L78 115" stroke="#FFC200"
+                                                stroke-width="3" fill="none" stroke-linecap="round" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="tag-badge tag-badge--blue text-xs">
+                                            <i data-lucide="cpu" class="w-3 h-3"></i>
+                                            SAT · 先进计算学院
+                                        </span>
+                                    </div>
+                                    <p class="text-center text-xs text-xjtlu-gray max-w-[180px] leading-relaxed italic">
+                                        "申研这件事，<br>越早准备越好。"
+                                    </p>
+                                </div>
+
+                                <!-- 右栏：标题 + 按钮组 -->
+                                <div class="flex flex-col items-start gap-6 w-full max-w-xs">
+                                    <div class="flex flex-col gap-1">
+                                        <p class="text-xs font-bold text-xjtlu-blue tracking-[0.25em] uppercase">XJTLU
+                                            Postgrad Simulator</p>
+                                        <h1 class="text-4xl font-black text-xjtlu-navy leading-tight">
+                                            西浦<br>申研模拟器
+                                        </h1>
+                                        <p class="text-sm text-xjtlu-gray mt-1 leading-relaxed">
+                                            每一个抉择，都决定你的 Offer。
+                                        </p>
+                                    </div>
+                                    <div class="w-full h-px bg-gray-100"></div>
+                                    <div class="flex flex-col gap-3 w-full">
+                                        <button
+                                            class="xjtlu-btn xjtlu-btn--primary w-full justify-center text-base py-3">
+                                            <i data-lucide="play" class="w-4 h-4"></i>
+                                            开始游戏
+                                        </button>
+                                        <button class="xjtlu-btn xjtlu-btn--secondary w-full justify-center">
+                                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                            重新开始
+                                        </button>
+                                        <button class="xjtlu-btn xjtlu-btn--ghost w-full justify-center">
+                                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                                            怎么玩？
+                                        </button>
+                                    </div>
+                                    <p class="text-[0.65rem] text-gray-300 tracking-widest self-end">
+                                        v1.0 · MVP Demo
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        The main menu provides options to start a new game, continue a saved game, and access game
+                        instructions.
+                        It features the game's mascot and title, creating an engaging first impression for players.
+                    </p>
+                </div>
+
+                <!-- 校园地图 -->
+                <div class="summary-card fade-in mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Campus Map</h3>
+                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                        <div class="w-full h-[500px] bg-white rounded-lg flex overflow-hidden">
+                            <!-- 左侧：地图区 -->
+                            <div class="relative flex-[65] overflow-hidden bg-gray-100">
+                                <div id="map-wrap" class="relative w-full h-full">
+                                    <img id="campus-map-img" src="images/campus_map.png" alt="西浦校园平面图"
+                                        class="w-full h-full object-contain select-none" draggable="false" />
+                                    <!-- Pin 层 -->
+                                    <div id="hotspot-layer" class="absolute pointer-events-none"
+                                        style="left:0;top:0;width:100%;height:100%;">
+                                        <!-- 示例 Pin -->
+                                        <button class="map-pin map-pin--action" data-building-id="fb"
+                                            title="Founder's Building" aria-label="Founder's Building"
+                                            style="left:25%;top:30%;display:block;">
+                                            <i data-lucide="building" class="lucide map-pin__icon"></i>
+                                            <span class="map-pin__label">FB</span>
+                                        </button>
+                                        <button class="map-pin map-pin--action" data-building-id="cb"
+                                            title="Central Building" aria-label="Central Building"
+                                            style="left:50%;top:40%;display:block;">
+                                            <i data-lucide="building-2" class="lucide map-pin__icon"></i>
+                                            <span class="map-pin__label">CB</span>
+                                        </button>
+                                        <button class="map-pin map-pin--info" data-building-id="dorm" title="Dormitory"
+                                            aria-label="Dormitory" style="left:75%;top:60%;display:block;">
+                                            <i data-lucide="home" class="lucide map-pin__icon"></i>
+                                            <span class="map-pin__label">宿舍</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- 结束本月按钮 -->
+                                <div class="absolute bottom-4 right-4 z-40">
+                                    <button id="btn-end-month" class="xjtlu-btn xjtlu-btn--primary text-sm shadow-lg">
+                                        <i data-lucide="skip-forward" class="w-4 h-4"></i>
+                                        结束本月
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 右侧：信息面板 -->
+                            <div id="right-sidebar"
+                                class="flex-[35] flex flex-col border-l-2 border-gray-200 bg-white overflow-hidden">
+                                <!-- 上半部：建筑信息 -->
+                                <div id="info-panel"
+                                    class="flex-1 flex flex-col overflow-hidden border-b-2 border-gray-100">
+                                    <div
+                                        class="flex-1 flex flex-col items-center justify-center gap-3 px-6 text-center">
+                                        <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center">
+                                            <i data-lucide="map-pin" class="w-6 h-6 text-xjtlu-gray"></i>
+                                        </div>
+                                        <p class="text-sm font-bold text-xjtlu-navy">点击地图上的建筑</p>
+                                        <p class="text-xs text-xjtlu-gray leading-relaxed">
+                                            蓝色标记可消耗 AP 执行活动<br>灰色标记仅供了解
+                                        </p>
+                                        <div class="mt-4 flex flex-col gap-2 w-full max-w-[180px]">
+                                            <div class="flex items-center gap-2 text-xs text-xjtlu-gray">
+                                                <div class="w-3 h-3 rounded-full bg-xjtlu-blue shrink-0"></div>
+                                                可执行行动的建筑
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xs text-xjtlu-gray">
+                                                <div class="w-3 h-3 rounded-full bg-gray-400 shrink-0"></div>
+                                                纯科普建筑
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="shrink-0 border-t border-gray-100 px-5 py-3 flex items-center gap-2 text-xs text-xjtlu-gray">
+                                        <i data-lucide="zap" class="w-3.5 h-3.5 text-xjtlu-blue"></i>
+                                        本月剩余行动点显示在顶部状态栏
+                                    </div>
+                                </div>
+
+                                <!-- 下半部：个人简历与状态 -->
+                                <div id="player-status-panel"
+                                    class="h-[42%] shrink-0 flex flex-col bg-gray-50 overflow-hidden">
+                                    <div
+                                        class="px-5 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
+                                        <h3 class="text-sm font-black text-xjtlu-navy flex items-center gap-1.5">
+                                            <i data-lucide="contact" class="w-4 h-4"></i>
+                                            我的申请履历
+                                        </h3>
+                                        <i data-lucide="help-circle" class="w-4 h-4 text-xjtlu-gray cursor-help"></i>
+                                    </div>
+                                    <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+                                        <!-- 硬件条件 -->
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div
+                                                class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-1">
+                                                <span
+                                                    class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">累计
+                                                    GPA</span>
+                                                <span class="text-lg font-black text-xjtlu-green">3.50</span>
+                                            </div>
+                                            <div
+                                                class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-1">
+                                                <span
+                                                    class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">雅思成绩</span>
+                                                <span class="text-lg font-black text-xjtlu-blue">7.0</span>
+                                            </div>
+                                        </div>
+                                        <!-- 软背景 -->
+                                        <div class="flex flex-col gap-2">
+                                            <span
+                                                class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">软背景积累</span>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span class="tag-badge tag-badge--blue">一段实习</span>
+                                                <span class="tag-badge tag-badge--blue">一段科研</span>
+                                            </div>
+                                        </div>
+                                        <div class="h-px bg-gray-200 my-1"></div>
+                                        <!-- 活跃 Buff -->
+                                        <div class="flex flex-col gap-2">
+                                            <span
+                                                class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">活跃状态
+                                                (Buffs)</span>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span class="tag-badge tag-badge--yellow">
+                                                    <i data-lucide="users" class="w-3 h-3"></i>
+                                                    雅思搭子
+                                                </span>
+                                                <span class="tag-badge tag-badge--red">
+                                                    <i data-lucide="frown" class="w-3 h-3"></i>
+                                                    压力过大
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        The campus map is the main gameplay interface where players can explore different buildings and
+                        perform actions.
+                        Each building offers different activities that consume Action Points (AP) and affect the
+                        player's stats.
+                        The right sidebar displays building information and the player's current status, including GPA,
+                        IELTS score, and active buffs.
+                    </p>
+                </div>
+
+                <!-- 事件系统 -->
+                <div class="summary-card fade-in mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Event System</h3>
+                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                        <div class="bg-white rounded-lg p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-xjtlu-blue flex items-center justify-center text-white">
+                                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">Midterm Exam</h4>
+                                    <p class="text-sm text-gray-600">October 15, 2024</p>
+                                </div>
+                            </div>
+                            <p class="mb-4">
+                                You have a midterm exam next week. How will you prepare?
+                            </p>
+                            <div class="space-y-3">
+                                <button
+                                    class="w-full text-left p-3 border border-xjtlu-blue bg-xjtlu-blue/5 rounded-lg hover:bg-xjtlu-blue hover:text-white">
+                                    Study intensively (Academic +3, Mental -1)
+                                </button>
+                                <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                    Balance study and rest (Academic +1, Mental +1)
+                                </button>
+                                <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                    Focus on other activities (No change)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        The event system presents players with various scenarios that require decision-making.
+                        Each choice affects the player's stats and can lead to different outcomes in the game.
+                    </p>
+                </div>
+
+                <!-- 结局系统 -->
+                <div class="summary-card fade-in">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Ending System</h3>
+                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                        <div class="bg-white rounded-lg p-6 text-center">
+                            <div
+                                class="w-24 h-24 rounded-full bg-xjtlu-blue flex items-center justify-center text-white mx-auto mb-4">
+                                <i data-lucide="trophy" class="w-12 h-12"></i>
+                            </div>
+                            <h4 class="text-2xl font-bold mb-2">Congratulations!</h4>
+                            <p class="mb-4">
+                                You have successfully received an offer from your dream university!
+                            </p>
+                            <div class="mb-6">
+                                <div class="inline-block bg-xjtlu-blue/10 text-xjtlu-blue px-4 py-2 rounded-full">
+                                    University College London
+                                </div>
+                            </div>
+                            <button class="xjtlu-btn xjtlu-btn--primary">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                Play Again
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        The ending system provides different outcomes based on the player's choices and stats throughout
+                        the game.
+                        Players can receive offers from different universities depending on their academic performance
+                        and extracurricular activities.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-xjtlu-navy text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    <span class="text-xl font-bold">XJTLU Journey Simulator</span>
+                </div>
+                <div class="flex flex-col items-center md:items-end">
+                    <p class="text-sm opacity-80">© 2026 XJTLU Journey Simulator Team</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 初始化 Lucide 图标 -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

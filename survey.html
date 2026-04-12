@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survey - XJTLU Journey Simulator</title>
+
+    <!-- Tailwind CSS (Play CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind 主题扩展：注入西浦蓝与亮黄色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 西浦蓝
+                        'xjtlu-navy': '#003366',
+                        'xjtlu-blue': '#004B9B',
+                        'xjtlu-light': '#1A6DC2',
+                        // 亮黄（高亮 / 警告）
+                        'xjtlu-yellow': '#FFD700',
+                        'xjtlu-amber': '#FFC200',
+                        // 辅助色
+                        'xjtlu-red': '#D93025',
+                        'xjtlu-green': '#1E8A44',
+                        'xjtlu-gray': '#6B7280',
+                    },
+                    fontFamily: {
+                        sans: [
+                            '"Noto Sans SC"',
+                            '"PingFang SC"',
+                            '"Microsoft YaHei"',
+                            'ui-sans-serif',
+                            'system-ui',
+                            'sans-serif',
+                        ],
+                    },
+                    boxShadow: {
+                        'hotspot-active': '0 0 0 4px rgba(0, 75, 155, 0.5)',
+                        'hotspot-warn': '0 0 0 4px rgba(217, 48, 37, 0.5)',
+                    },
+                    keyframes: {
+                        'float-up': {
+                            '0%': { opacity: '1', transform: 'translateY(0px)' },
+                            '100%': { opacity: '0', transform: 'translateY(-48px)' },
+                        },
+                        'danger-pulse': {
+                            '0%, 100%': { 'box-shadow': 'inset 0 0 0px rgba(217,48,37,0)' },
+                            '50%': { 'box-shadow': 'inset 0 0 60px rgba(217,48,37,0.55)' },
+                        },
+                        'stat-bump': {
+                            '0%': { transform: 'scale(1)' },
+                            '40%': { transform: 'scale(1.18)' },
+                            '100%': { transform: 'scale(1)' },
+                        },
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0px)' },
+                        },
+                        'ripple': {
+                            '0%': { transform: 'scale(0)', opacity: '0.6' },
+                            '100%': { transform: 'scale(4)', opacity: '0' },
+                        },
+                    },
+                    animation: {
+                        'float-up': 'float-up 1.2s ease-out forwards',
+                        'danger-pulse': 'danger-pulse 1s ease-in-out infinite',
+                        'stat-bump': 'stat-bump 0.3s ease-out',
+                        'fade-in': 'fade-in 0.4s ease-out',
+                        'ripple': 'ripple 0.6s ease-out',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Google Fonts：Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- 项目全局样式 -->
+    <style>
+        /* 基础重置 */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        /* 可复用按钮组件 */
+        .xjtlu-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+            border: 2.5px solid transparent;
+            cursor: pointer;
+            transition: background-color 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.1s ease,
+                box-shadow 0.15s ease;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .xjtlu-btn:active {
+            transform: scale(0.96);
+        }
+
+        .xjtlu-btn--primary {
+            background-color: #004B9B;
+            color: #ffffff;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--primary:hover {
+            background-color: #003366;
+            border-color: #003366;
+            box-shadow: 0 4px 14px rgba(0, 75, 155, 0.35);
+        }
+
+        .xjtlu-btn--secondary {
+            background-color: transparent;
+            color: #004B9B;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--secondary:hover {
+            background-color: rgba(0, 75, 155, 0.08);
+        }
+
+        /* 卡片样式 */
+        .summary-card {
+            background: #ffffff;
+            border: 2.5px solid #003366;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 51, 102, 0.12);
+        }
+
+        /* 动画 */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fade-in 0.35s ease-out both;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+    <!-- 导航栏 -->
+    <nav class="bg-xjtlu-navy text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                    <h1 class="text-xl font-bold">XJTLU Journey Simulator</h1>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="index.html" class="hover:text-xjtlu-yellow transition-colors">Overview</a>
+                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Survey</a>
+                    <a href="personas.html" class="hover:text-xjtlu-yellow transition-colors">Personas</a>
+                    <a href="gameplay.html" class="hover:text-xjtlu-yellow transition-colors">Gameplay</a>
+                    <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 调查问卷统计 -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Survey Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 图表 1 -->
+                <div class="summary-card fade-in">
+                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Game Experience Rating</h3>
+                    <div class="h-64">
+                        <canvas id="experienceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 图表 2 -->
+                <div class="summary-card fade-in" style="animation-delay: 0.1s;">
+                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Most Popular Features</h3>
+                    <div class="h-64">
+                        <canvas id="featureChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 图表 3 -->
+                <div class="summary-card fade-in" style="animation-delay: 0.2s;">
+                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Game Difficulty Evaluation</h3>
+                    <div class="h-64">
+                        <canvas id="difficultyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 图表 4 -->
+                <div class="summary-card fade-in" style="animation-delay: 0.3s;">
+                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Recommendation Intent</h3>
+                    <div class="h-64">
+                        <canvas id="recommendationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- 页脚 -->
+    <footer class="bg-xjtlu-navy text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    <span class="text-xl font-bold">XJTLU Journey Simulator</span>
+                </div>
+                <div class="flex flex-col items-center md:items-end">
+                    <p class="text-sm opacity-80">© 2026 XJTLU Journey Simulator Team</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 初始化 Lucide 图标和图表 -->
+    <script>
+        lucide.createIcons();
+
+        // 初始化图表
+        document.addEventListener('DOMContentLoaded', function () {
+            // 游戏体验评分
+            const experienceCtx = document.getElementById('experienceChart').getContext('2d');
+            new Chart(experienceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Very Poor', 'Poor', 'Average', 'Good', 'Excellent'],
+                    datasets: [{
+                        label: 'Number of Users',
+                        data: [2, 5, 15, 38, 40],
+                        backgroundColor: '#004B9B',
+                        borderColor: '#003366',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 最受欢迎的功能
+            const featureCtx = document.getElementById('featureChart').getContext('2d');
+            new Chart(featureCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Campus Exploration', 'Event System', 'Status Management', 'Ending System', 'Other'],
+                    datasets: [{
+                        data: [35, 25, 20, 15, 5],
+                        backgroundColor: [
+                            '#004B9B',
+                            '#1E8A44',
+                            '#FFD700',
+                            '#D93025',
+                            '#6B7280'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // 游戏难度评价
+            const difficultyCtx = document.getElementById('difficultyChart').getContext('2d');
+            new Chart(difficultyCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Very Easy', 'Easy', 'Moderate', 'Difficult', 'Very Difficult'],
+                    datasets: [{
+                        label: 'User Evaluation',
+                        data: [5, 15, 55, 20, 5],
+                        backgroundColor: 'rgba(0, 75, 155, 0.2)',
+                        borderColor: '#004B9B',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // 推荐意愿
+            const recommendationCtx = document.getElementById('recommendationChart').getContext('2d');
+            new Chart(recommendationCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                    datasets: [{
+                        label: 'Recommendation Score',
+                        data: [0, 2, 5, 8, 12, 18, 25, 35, 30, 40],
+                        backgroundColor: 'rgba(0, 75, 155, 0.2)',
+                        borderColor: '#004B9B',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
