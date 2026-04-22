@@ -316,148 +316,182 @@
             <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">User Journey Map</h2>
             <div class="max-w-5xl mx-auto">
                 <div class="summary-card fade-in">
-                    <!-- Actor & Scenario -->
-                    <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
-                            <i data-lucide="user" class="w-6 h-6"></i>
-                            Actor & Scenario
-                        </h3>
-                        <p class="text-gray-700">
-                            <strong>Actor:</strong> XJTLU undergraduate students preparing for postgraduate studies
-                        </p>
-                        <p class="text-gray-700 mt-2">
-                            <strong>Scenario:</strong> Students aim to navigate their academic journey, build a strong
-                            profile, and secure offers from their dream universities.
-                        </p>
+                    <!-- User Journey Map Header -->
+                    <div class="bg-gray-50 p-6 rounded-lg mb-8">
+                        <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+                            <div class="flex flex-col md:flex-row items-center gap-6">
+                                <div class="text-center md:text-left">
+                                    <h4 class="font-bold text-xjtlu-navy mb-1">Actor</h4>
+                                    <p class="text-sm text-gray-700">XJTLU undergraduate student preparing for
+                                        postgraduate study.</p>
+                                </div>
+                                <div class="text-center md:text-left">
+                                    <h4 class="font-bold text-xjtlu-navy mb-1">Scenario</h4>
+                                    <p class="text-sm text-gray-700">Uses the game to explore choices, build a strong
+                                        profile, and work toward dream-university offers.</p>
+                                </div>
+                                <div class="text-center md:text-left">
+                                    <h4 class="font-bold text-xjtlu-navy mb-1">Expectations</h4>
+                                    <p class="text-sm text-gray-700">Clear guidance, meaningful choices, visible
+                                        progress, and realistic outcomes.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Journey Phases -->
-                    <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
-                            <i data-lucide="layers" class="w-6 h-6"></i>
-                            Phases
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 1: Onboarding</h4>
-                                <p class="text-sm text-gray-700">Setting goals and creating character</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 2: Exploration</h4>
-                                <p class="text-sm text-gray-700">Exploring campus and activities</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 3: Development</h4>
-                                <p class="text-sm text-gray-700">Building skills and profile</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 4: Outcome</h4>
-                                <p class="text-sm text-gray-700">Receiving offers and endings</p>
-                            </div>
-                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="border-b-2 border-gray-200 py-4 px-4 text-left">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="map-pin" class="w-5 h-5 text-xjtlu-navy"></i>
+                                            <span class="font-bold text-xjtlu-navy">Touchpoints</span>
+                                        </div>
+                                    </th>
+                                    <th class="border-b-2 border-gray-200 py-4 px-4 bg-blue-50">
+                                        <h4 class="font-bold text-xjtlu-navy">ONBOARDING</h4>
+                                    </th>
+                                    <th class="border-b-2 border-gray-200 py-4 px-4 bg-green-50">
+                                        <h4 class="font-bold text-xjtlu-navy">EXPLORATION</h4>
+                                    </th>
+                                    <th class="border-b-2 border-gray-200 py-4 px-4 bg-purple-50">
+                                        <h4 class="font-bold text-xjtlu-navy">DEVELOPMENT</h4>
+                                    </th>
+                                    <th class="border-b-2 border-gray-200 py-4 px-4 bg-yellow-50">
+                                        <h4 class="font-bold text-xjtlu-navy">OUTCOME</h4>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border-b border-gray-200 py-4 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="map-pin" class="w-5 h-5 text-xjtlu-navy"></i>
+                                            <span class="font-bold text-xjtlu-navy">Touchpoints</span>
+                                        </div>
+                                    </td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-blue-50 text-sm">start screen, goal
+                                        setting, character creation</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-green-50 text-sm">campus map,
+                                        events, NPC dialogue</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-purple-50 text-sm">skill tasks,
+                                        profile dashboard, decision events</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-yellow-50 text-sm">result screen,
+                                        offer summary, reflection page</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-200 py-4 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="pointer" class="w-5 h-5 text-xjtlu-navy"></i>
+                                            <span class="font-bold text-xjtlu-navy">Actions</span>
+                                        </div>
+                                    </td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-blue-50 text-sm">set postgraduate
+                                        goals, choose interests</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-green-50 text-sm">explore
+                                        buildings, join activities, gather information</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-purple-50 text-sm">manage time,
+                                        build skills, network, make choices</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-yellow-50 text-sm">receive offers,
+                                        compare endings, reflect on journey</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-200 py-4 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="alert-triangle" class="w-5 h-5 text-xjtlu-navy"></i>
+                                            <span class="font-bold text-xjtlu-navy">Pain points</span>
+                                        </div>
+                                    </td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-blue-50 text-sm">unclear direction,
+                                        uncertainty about majors</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-green-50 text-sm">too many choices,
+                                        balancing time</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-purple-50 text-sm">stress, fear of
+                                        wrong decisions, limited resources</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-yellow-50 text-sm">mixed results,
+                                        wondering what to improve</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-200 py-4 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="smile" class="w-5 h-5 text-xjtlu-navy"></i>
+                                            <span class="font-bold text-xjtlu-navy">Emotions</span>
+                                        </div>
+                                    </td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-blue-50 text-sm">curious, hopeful
+                                    </td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-green-50 text-sm">engaged, slightly
+                                        overwhelmed</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-purple-50 text-sm">anxious,
+                                        pressured</td>
+                                    <td class="border-b border-gray-200 py-4 px-4 bg-yellow-50 text-sm">relief,
+                                        achievement, reflection</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="activity" class="w-5 h-5 text-xjtlu-navy"></i>
+                                            <span class="font-bold text-xjtlu-navy">Emotional Curve</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 bg-blue-50">
+                                        <svg class="w-full h-16" viewBox="0 0 200 60"
+                                            preserveAspectRatio="xMidYMid meet">
+                                            <path d="M10,50 Q30,20 60,30 T120,20 T180,10" stroke="#3B82F6"
+                                                stroke-width="3" fill="none" />
+                                            <circle cx="10" cy="50" r="4" fill="#3B82F6" />
+                                            <text x="20" y="58" font-size="10" fill="#004B9B">Onboarding</text>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-4 bg-green-50">
+                                        <svg class="w-full h-16" viewBox="0 0 200 60"
+                                            preserveAspectRatio="xMidYMid meet">
+                                            <path d="M10,20 Q50,10 90,5 T180,10" stroke="#22C55E" stroke-width="3"
+                                                fill="none" />
+                                            <circle cx="90" cy="5" r="4" fill="#22C55E" />
+                                            <text x="60" y="20" font-size="10" fill="#004B9B">Exploration</text>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-4 bg-purple-50">
+                                        <svg class="w-full h-16" viewBox="0 0 200 60"
+                                            preserveAspectRatio="xMidYMid meet">
+                                            <path d="M10,10 Q50,30 90,40 T180,30" stroke="#A855F7" stroke-width="3"
+                                                fill="none" />
+                                            <circle cx="90" cy="40" r="4" fill="#A855F7" />
+                                            <text x="60" y="55" font-size="10" fill="#004B9B">Development</text>
+                                        </svg>
+                                    </td>
+                                    <td class="py-4 px-4 bg-yellow-50">
+                                        <svg class="w-full h-16" viewBox="0 0 200 60"
+                                            preserveAspectRatio="xMidYMid meet">
+                                            <path d="M10,30 Q50,20 90,10 T180,5" stroke="#EAB308" stroke-width="3"
+                                                fill="none" />
+                                            <circle cx="180" cy="5" r="4" fill="#EAB308" />
+                                            <text x="120" y="20" font-size="10" fill="#004B9B">Outcome</text>
+                                        </svg>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="lightbulb" class="w-5 h-5 text-xjtlu-navy"></i>
+                                            <span class="font-bold text-xjtlu-navy">Opportunities</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 bg-blue-50 text-sm">guided onboarding and goal suggestions</td>
+                                    <td class="py-4 px-4 bg-green-50 text-sm">recommended activities and planning tips
+                                    </td>
+                                    <td class="py-4 px-4 bg-purple-50 text-sm">feedback, progress tracking, support
+                                        prompts</td>
+                                    <td class="py-4 px-4 bg-yellow-50 text-sm">personalized next-step advice</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <!-- Actions & Thoughts -->
-                    <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
-                            <i data-lucide="brain" class="w-6 h-6"></i>
-                            Actions & Thoughts
-                        </h3>
-                        <div class="space-y-4">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 1: Onboarding</h4>
-                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Create character, set
-                                    postgraduate goals, choose desired universities</p>
-                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "What do I want to study?
-                                    Which universities are best for me?"
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 2: Exploration</h4>
-                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Explore campus
-                                    buildings, participate in activities, meet characters</p>
-                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "What activities will help
-                                    me build my profile? How can I balance my time?"
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 3: Development</h4>
-                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Manage time, make
-                                    decisions, develop skills, build network</p>
-                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "Am I making the right
-                                    decisions? Am I on track for my goals?"
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 4: Outcome</h4>
-                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Receive offers, reflect
-                                    on journey, plan next steps</p>
-                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "Did I achieve my goals?
-                                    What could I have done differently?"
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Emotional Journey -->
-                    <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
-                            <i data-lucide="heart" class="w-6 h-6"></i>
-                            Emotional Journey
-                        </h3>
-                        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                            <div class="relative h-40">
-                                <!-- Emotional curve -->
-                                <svg class="w-full h-full" viewBox="0 0 800 200">
-                                    <path d="M50,150 Q200,50 350,120 Q500,190 650,80 Q800,30 850,100" stroke="#004B9B"
-                                        stroke-width="3" fill="none" />
-                                    <!-- High points -->
-                                    <circle cx="200" cy="50" r="6" fill="#1E8A44" />
-                                    <circle cx="800" cy="30" r="6" fill="#1E8A44" />
-                                    <!-- Low points -->
-                                    <circle cx="500" cy="190" r="6" fill="#D93025" />
-                                    <!-- Labels -->
-                                    <text x="50" y="170" class="text-xs text-gray-700">Onboarding</text>
-                                    <text x="180" y="40" class="text-xs text-gray-700">Excitement</text>
-                                    <text x="330" y="140" class="text-xs text-gray-700">Exploration</text>
-                                    <text x="480" y="200" class="text-xs text-gray-700">Stress</text>
-                                    <text x="630" y="100" class="text-xs text-gray-700">Development</text>
-                                    <text x="800" y="20" class="text-xs text-gray-700">Achievement</text>
-                                </svg>
-                            </div>
-                            <p class="text-sm text-gray-700 mt-4">
-                                Students experience a range of emotions throughout their journey, from initial
-                                excitement and curiosity to periods of stress and uncertainty, finally reaching a sense
-                                of achievement and reflection at the end.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Opportunities -->
-                    <div class="mb-4">
-                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
-                            <i data-lucide="lightbulb" class="w-6 h-6"></i>
-                            Opportunities
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Academic Planning</h4>
-                                <p class="text-sm text-gray-700">Provide personalized academic advising and course
-                                    selection guidance based on career goals.</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Skill Development</h4>
-                                <p class="text-sm text-gray-700">Offer skill-building workshops and resources tailored
-                                    to specific fields of study.</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Networking</h4>
-                                <p class="text-sm text-gray-700">Facilitate connections with alumni, professors, and
-                                    industry professionals.</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="font-bold text-xjtlu-navy mb-2">Well-being Support</h4>
-                                <p class="text-sm text-gray-700">Provide resources for stress management and work-life
-                                    balance during the application process.</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
