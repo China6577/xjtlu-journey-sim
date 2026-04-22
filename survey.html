@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Survey - XJTLU Journey Simulator</title>
+    <title>Survey Statistics - XJTLU Journey Simulator</title>
 
     <!-- Tailwind CSS (Play CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -88,13 +88,29 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- 项目全局样式 -->
+    <!-- 全局样式 -->
     <style>
         /* 基础重置 */
         *,
         *::before,
         *::after {
             box-sizing: border-box;
+        }
+
+        html {
+            font-size: 115%;
+        }
+
+        /* Lucide 图标全局规范 */
+        .lucide,
+        svg.lucide {
+            stroke-width: 2.5px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
         }
 
         /* 可复用按钮组件 */
@@ -145,6 +161,16 @@
             background-color: rgba(0, 75, 155, 0.08);
         }
 
+        .xjtlu-btn--ghost {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border-color: #e5e7eb;
+        }
+
+        .xjtlu-btn--ghost:hover {
+            background-color: #e5e7eb;
+        }
+
         /* 卡片样式 */
         .summary-card {
             background: #ffffff;
@@ -152,6 +178,38 @@
             border-radius: 1rem;
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 51, 102, 0.12);
+        }
+
+        /* 标签样式 */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            border: 1.5px solid transparent;
+        }
+
+        .tag-badge--blue {
+            background-color: rgba(0, 75, 155, 0.1);
+            border-color: #004B9B;
+            color: #004B9B;
+        }
+
+        .tag-badge--yellow {
+            background-color: rgba(255, 215, 0, 0.2);
+            border-color: #FFC200;
+            color: #7a5c00;
+        }
+
+        .tag-badge--red {
+            background-color: rgba(217, 48, 37, 0.1);
+            border-color: #D93025;
+            color: #D93025;
         }
 
         /* 动画 */
@@ -170,6 +228,159 @@
         .fade-in {
             animation: fade-in 0.35s ease-out both;
         }
+
+        /* 飘字动画 */
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(-12px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-52px);
+            }
+        }
+
+        .floating-text {
+            position: absolute;
+            font-size: 1rem;
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            animation: float-up 1.2s ease-out forwards;
+            z-index: 9999;
+        }
+
+        /* 数值抖动动画 */
+        @keyframes stat-bump {
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.22);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stat-bump {
+            animation: stat-bump 0.3s ease-out;
+        }
+
+        /* 滚动条统一样式 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 75, 155, 0.3);
+            border-radius: 9999px;
+        }
+
+        /* 地图热区样式 */
+        .map-hotspot {
+            position: absolute;
+            border-radius: 9999px;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: box-shadow 0.2s ease, transform 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-hotspot--action {
+            width: 18px;
+            height: 18px;
+            background-color: #004B9B;
+            border: 2.5px solid #ffffff;
+            box-shadow: 0 0 0 3px #004B9B,
+                0 0 12px rgba(0, 75, 155, 0.5);
+            animation: hotspot-pulse 2.5s ease-in-out infinite;
+        }
+
+        .map-hotspot--action:hover {
+            background-color: #003366;
+            box-shadow: 0 0 0 3px #003366,
+                0 0 20px rgba(0, 75, 155, 0.7);
+            transform: translate(-50%, -50%) scale(1.25);
+        }
+
+        /* 热区脉冲动画 */
+        @keyframes hotspot-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 3px #004B9B, 0 0 8px rgba(0, 75, 155, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 5px #004B9B, 0 0 20px rgba(0, 75, 155, 0.7);
+            }
+        }
+
+        /* 地图 Pin 样式 */
+        .map-pin {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px 4px 6px;
+            border-radius: 9999px;
+            border: 2px solid transparent;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: transform 0.15s ease,
+                box-shadow 0.15s ease;
+            pointer-events: auto;
+            user-select: none;
+            line-height: 1;
+        }
+
+        .map-pin--action {
+            background-color: #004B9B;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 75, 155, 0.5),
+                0 0 0 2px rgba(0, 75, 155, 0.3);
+            animation: pin-pulse 2.5s ease-in-out infinite;
+        }
+
+        .map-pin--action:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+            box-shadow: 0 4px 16px rgba(0, 75, 155, 0.7),
+                0 0 0 3px rgba(0, 75, 155, 0.4);
+            animation: none;
+        }
+
+        /* Pin 脉冲动画 */
+        @keyframes pin-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 2px 8px rgba(0, 75, 155, 0.4), 0 0 0 2px rgba(0, 75, 155, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 2px 16px rgba(0, 75, 155, 0.7), 0 0 0 4px rgba(0, 75, 155, 0.3);
+            }
+        }
     </style>
 </head>
 
@@ -184,56 +395,276 @@
                 </div>
                 <div class="flex flex-wrap justify-center gap-4">
                     <a href="index.html" class="hover:text-xjtlu-yellow transition-colors">Overview</a>
-                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Survey</a>
-                    <a href="personas.html" class="hover:text-xjtlu-yellow transition-colors">Personas</a>
-                    <a href="gameplay.html" class="hover:text-xjtlu-yellow transition-colors">Gameplay</a>
+                    <a href="requirement.html" class="hover:text-xjtlu-yellow transition-colors">Requirement</a>
                     <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
+                    <a href="implementation.html" class="hover:text-xjtlu-yellow transition-colors">Implementation</a>
+                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors font-bold">Evaluation</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- 调查问卷统计 -->
-    <section class="py-16 bg-gray-50">
+    <!-- 评估与反思 -->
+    <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Survey Statistics</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- 图表 1 -->
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Evaluation & Reflection</h2>
+            <div class="max-w-6xl mx-auto">
+                <!-- Usability Testing -->
+                <div class="summary-card fade-in mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                        Usability Testing
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Results from testing our "Alpha" version with 3 real users. Each tester was asked to complete a series of tasks and provide feedback on their experience.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <!-- Tester 1 -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
+                                    T1
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xjtlu-navy">Tester 1: Undergraduate Student</h4>
+                                    <p class="text-sm text-gray-600">2nd year Computer Science major</p>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Tasks Completed:</h5>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                        <li>Successfully created a character</li>
+                                        <li>Explored campus locations</li>
+                                        <li>Completed 3 events</li>
+                                        <li>Reached an ending</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Feedback:</h5>
+                                    <p class="text-gray-600">"The game is fun and engaging. I like how my choices affect the outcome. The campus map is easy to navigate."</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Suggestions:</h5>
+                                    <p class="text-gray-600">"Add more event variety and perhaps some mini-games to make it more interactive."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tester 2 -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
+                                    T2
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xjtlu-navy">Tester 2: Graduate Student</h4>
+                                    <p class="text-sm text-gray-600">1st year MSc in Data Science</p>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Tasks Completed:</h5>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                        <li>Created a character</li>
+                                        <li>Explored campus</li>
+                                        <li>Completed 2 events</li>
+                                        <li>Tested stat tracking</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Feedback:</h5>
+                                    <p class="text-gray-600">"The game provides a good overview of the postgraduate preparation process. The stat system is clear and motivating."</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Suggestions:</h5>
+                                    <p class="text-gray-600">"Include more realistic scenarios and perhaps add a timeline feature to help visualize the preparation process."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tester 3 -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
+                                    T3
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xjtlu-navy">Tester 3: Academic Advisor</h4>
+                                    <p class="text-sm text-gray-600">XJTLU Student Affairs Office</p>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Tasks Completed:</h5>
+                                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                        <li>Reviewed game mechanics</li>
+                                        <li>Tested educational content</li>
+                                        <li>Evaluated learning outcomes</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Feedback:</h5>
+                                    <p class="text-gray-600">"The game effectively communicates the importance of early preparation and balanced skill development. It's a valuable educational tool."</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Suggestions:</h5>
+                                    <p class="text-gray-600">"Add more specific information about different universities and program requirements to make it more informative."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Iterative Refinement -->
+                <div class="summary-card fade-in mb-12">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                        Iterative Refinement
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        "Before and After" screenshots showing changes made based on user feedback from usability testing.
+                    </p>
+                    
+                    <div class="space-y-8">
+                        <!-- Refinement 1: Campus Map -->
+                        <div>
+                            <h4 class="font-bold text-xjtlu-navy mb-4">Refinement 1: Campus Map Interface</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Before:</h5>
+                                    <div class="bg-gray-100 rounded-lg p-4">
+                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                            <div class="text-center">
+                                                <i data-lucide="map" class="w-12 h-12 text-gray-400 mx-auto mb-2"></i>
+                                                <p class="text-gray-500 text-sm">Original map with limited interaction</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        Limited interaction points and unclear navigation
+                                    </p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">After:</h5>
+                                    <div class="bg-gray-100 rounded-lg p-4">
+                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                            <div class="text-center">
+                                                <i data-lucide="map-pin" class="w-12 h-12 text-xjtlu-blue mx-auto mb-2"></i>
+                                                <p class="text-gray-500 text-sm">Enhanced map with interactive hotspots</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        Added interactive hotspots, clearer navigation, and real-time stat feedback
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Refinement 2: Event System -->
+                        <div>
+                            <h4 class="font-bold text-xjtlu-navy mb-4">Refinement 2: Event System</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">Before:</h5>
+                                    <div class="bg-gray-100 rounded-lg p-4">
+                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                            <div class="text-center">
+                                                <i data-lucide="message-circle" class="w-12 h-12 text-gray-400 mx-auto mb-2"></i>
+                                                <p class="text-gray-500 text-sm">Simple text-based events</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        Basic text-based events with limited choices
+                                    </p>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-gray-700 mb-2">After:</h5>
+                                    <div class="bg-gray-100 rounded-lg p-4">
+                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                            <div class="text-center">
+                                                <i data-lucide="activity" class="w-12 h-12 text-xjtlu-blue mx-auto mb-2"></i>
+                                                <p class="text-gray-500 text-sm">Enhanced events with visual feedback</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-2">
+                                        Added visual feedback, more choices, and clearer consequences
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Reflection -->
                 <div class="summary-card fade-in">
-                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Game Experience Rating</h3>
-                    <div class="h-64">
-                        <canvas id="experienceChart"></canvas>
-                    </div>
-                </div>
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="lightbulb" class="w-6 h-6"></i>
+                        Final Reflection
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        A brief discussion on the social/ethical implications of our design and the use of AI in this project.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <!-- Social/Ethical Implications -->
+                        <div>
+                            <h4 class="font-bold text-xjtlu-navy mb-4">Social/Ethical Implications</h4>
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <ul class="list-disc list-inside text-gray-700 space-y-3">
+                                    <li><strong>Accessibility:</strong> The game is designed to be accessible to all students, regardless of their background or academic standing. We've ensured that the interface is intuitive and the content is clear and understandable.</li>
+                                    <li><strong>Inclusivity:</strong> The game represents a diverse range of student experiences and backgrounds, promoting inclusivity and understanding of different perspectives.</li>
+                                    <li><strong>Mental Health:</strong> We've incorporated elements that emphasize work-life balance and mental well-being, addressing the growing concern of student stress and burnout.</li>
+                                    <li><strong>Educational Equity:</strong> The game provides valuable information about postgraduate preparation that may not be equally accessible to all students, helping to level the playing field.</li>
+                                    <li><strong>Privacy:</strong> All user data is anonymous and used only for improving the game experience, with clear privacy guidelines.</li>
+                                </ul>
+                            </div>
+                        </div>
 
-                <!-- 图表 2 -->
-                <div class="summary-card fade-in" style="animation-delay: 0.1s;">
-                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Most Popular Features</h3>
-                    <div class="h-64">
-                        <canvas id="featureChart"></canvas>
-                    </div>
-                </div>
+                        <!-- Use of AI -->
+                        <div>
+                            <h4 class="font-bold text-xjtlu-navy mb-4">Use of AI in This Project</h4>
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <p class="text-gray-700 mb-4">
+                                    We utilized generative AI in several aspects of this project:
+                                </p>
+                                <ul class="list-disc list-inside text-gray-700 space-y-3">
+                                    <li><strong>Content Generation:</strong> AI was used to generate event descriptions, dialogue, and scenario variations, ensuring a diverse range of experiences for players.</li>
+                                    <li><strong>Design Assistance:</strong> AI helped in generating UI design ideas and layout suggestions, which were then refined by our team.</li>
+                                    <li><strong>Testing Support:</strong> AI-assisted in creating test scenarios and analyzing user feedback data.</li>
+                                    <li><strong>Educational Content:</strong> AI helped in organizing and presenting complex information about postgraduate preparation in an engaging and accessible way.</li>
+                                </ul>
+                                <p class="text-gray-700 mt-4">
+                                    All AI-generated content was reviewed and edited by our team to ensure accuracy, relevance, and alignment with our educational goals. We were careful to maintain human oversight throughout the development process to ensure the quality and appropriateness of all content.
+                                </p>
+                            </div>
+                        </div>
 
-                <!-- 图表 3 -->
-                <div class="summary-card fade-in" style="animation-delay: 0.2s;">
-                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Game Difficulty Evaluation</h3>
-                    <div class="h-64">
-                        <canvas id="difficultyChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- 图表 4 -->
-                <div class="summary-card fade-in" style="animation-delay: 0.3s;">
-                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Recommendation Intent</h3>
-                    <div class="h-64">
-                        <canvas id="recommendationChart"></canvas>
+                        <!-- Future Directions -->
+                        <div>
+                            <h4 class="font-bold text-xjtlu-navy mb-4">Future Directions</h4>
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <p class="text-gray-700 mb-4">
+                                    Based on our evaluation and reflection, we plan to:
+                                </p>
+                                <ul class="list-disc list-inside text-gray-700 space-y-3">
+                                    <li>Expand the event library to include more diverse scenarios and challenges</li>
+                                    <li>Add multiplayer features to promote collaborative learning</li>
+                                    <li>Implement a more sophisticated AI system to provide personalized guidance</li>
+                                    <li>Develop additional modules for specific fields of study</li>
+                                    <li>Create a mobile version to increase accessibility</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-
 
     <!-- 页脚 -->
     <footer class="bg-xjtlu-navy text-white py-8">
@@ -250,106 +681,177 @@
         </div>
     </footer>
 
-    <!-- 初始化 Lucide 图标和图表 -->
+    <!-- 初始化 Lucide 图标 -->
     <script>
         lucide.createIcons();
 
-        // 初始化图表
-        document.addEventListener('DOMContentLoaded', function () {
-            // 游戏体验评分
-            const experienceCtx = document.getElementById('experienceChart').getContext('2d');
-            new Chart(experienceCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Very Poor', 'Poor', 'Average', 'Good', 'Excellent'],
-                    datasets: [{
-                        label: 'Number of Users',
-                        data: [2, 5, 15, 38, 40],
-                        backgroundColor: '#004B9B',
-                        borderColor: '#003366',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+        // 图表 1: 玩家结局分布 (饼图)
+        const outcomeCtx = document.getElementById('outcomeChart').getContext('2d');
+        new Chart(outcomeCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Standard Offer', 'Satisfactory Offer', 'Incomplete Play', 'Bad End: Scam', 'Bad End: Health'],
+                datasets: [{
+                    data: [35, 15, 15, 15, 20],
+                    backgroundColor: [
+                        '#1E8A44', // 绿色
+                        '#1A6DC2', // 浅蓝色
+                        '#6B7280', // 灰色
+                        '#D93025', // 红色
+                        '#8B5CF6'  // 紫色
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#003366',
+                            font: {
+                                family: 'Noto Sans SC',
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
                         }
                     }
                 }
-            });
+            }
+        });
 
-            // 最受欢迎的功能
-            const featureCtx = document.getElementById('featureChart').getContext('2d');
-            new Chart(featureCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Campus Exploration', 'Event System', 'Status Management', 'Ending System', 'Other'],
-                    datasets: [{
-                        data: [35, 25, 20, 15, 5],
-                        backgroundColor: [
-                            '#004B9B',
-                            '#1E8A44',
-                            '#FFD700',
-                            '#D93025',
-                            '#6B7280'
-                        ],
+        // 图表 2: 参与者意识转变 (条形图)
+        const awarenessCtx = document.getElementById('awarenessChart').getContext('2d');
+        new Chart(awarenessCtx, {
+            type: 'bar',
+            data: {
+                labels: ['ANTI-TRAP', 'TIMELINE', 'PROFILE BUILD', 'WELL-BEING'],
+                datasets: [
+                    {
+                        label: 'Initial Awareness',
+                        data: [2.1, 2.4, 2.2, 1.9],
+                        backgroundColor: '#D93025', // 红色
+                        borderColor: '#D93025',
                         borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // 游戏难度评价
-            const difficultyCtx = document.getElementById('difficultyChart').getContext('2d');
-            new Chart(difficultyCtx, {
-                type: 'radar',
-                data: {
-                    labels: ['Very Easy', 'Easy', 'Moderate', 'Difficult', 'Very Difficult'],
-                    datasets: [{
-                        label: 'User Evaluation',
-                        data: [5, 15, 55, 20, 5],
-                        backgroundColor: 'rgba(0, 75, 155, 0.2)',
+                    },
+                    {
+                        label: 'Post-Session Impact',
+                        data: [4.7, 4.3, 4.5, 4.6],
+                        backgroundColor: '#004B9B', // 蓝色
                         borderColor: '#004B9B',
-                        borderWidth: 2
-                    }]
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Max Possible (5.0)',
+                        data: [5, 5, 5, 5],
+                        backgroundColor: '#E5E7EB', // 浅灰色
+                        borderColor: '#E5E7EB',
+                        borderWidth: 1,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#003366',
+                            font: {
+                                family: 'Noto Sans SC',
+                                size: 12
+                            }
+                        }
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // 推荐意愿
-            const recommendationCtx = document.getElementById('recommendationChart').getContext('2d');
-            new Chart(recommendationCtx, {
-                type: 'line',
-                data: {
-                    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-                    datasets: [{
-                        label: 'Recommendation Score',
-                        data: [0, 2, 5, 8, 12, 18, 25, 35, 30, 40],
-                        backgroundColor: 'rgba(0, 75, 155, 0.2)',
-                        borderColor: '#004B9B',
-                        borderWidth: 2,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            color: '#6B7280'
+                        },
+                        grid: {
+                            color: 'rgba(0, 51, 102, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#6B7280'
+                        },
+                        grid: {
+                            color: 'rgba(0, 51, 102, 0.1)'
                         }
                     }
                 }
-            });
+            }
+        });
+
+        // 图表 3: 参与度与教育 (雷达图)
+        const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+        new Chart(engagementCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Usability', 'Immersion', 'Challenge', 'Knowledge', 'Aesthetics'],
+                datasets: [{
+                    label: 'Engagement',
+                    data: [4, 4, 3, 3, 4],
+                    backgroundColor: 'rgba(0, 75, 155, 0.2)',
+                    borderColor: '#004B9B',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#004B9B',
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 5,
+                        stepSize: 1,
+                        angleLines: {
+                            color: 'rgba(0, 51, 102, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(0, 51, 102, 0.1)'
+                        },
+                        pointLabels: {
+                            color: '#003366',
+                            font: {
+                                family: 'Noto Sans SC',
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#6B7280',
+                            backdropColor: 'transparent'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
         });
     </script>
 </body>

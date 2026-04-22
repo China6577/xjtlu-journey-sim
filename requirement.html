@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Requirements - XJTLU Journey Simulator</title>
+
+    <!-- Tailwind CSS (Play CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind 主题扩展：注入西浦蓝与亮黄色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 西浦蓝
+                        'xjtlu-navy': '#003366',
+                        'xjtlu-blue': '#004B9B',
+                        'xjtlu-light': '#1A6DC2',
+                        // 亮黄（高亮 / 警告）
+                        'xjtlu-yellow': '#FFD700',
+                        'xjtlu-amber': '#FFC200',
+                        // 辅助色
+                        'xjtlu-red': '#D93025',
+                        'xjtlu-green': '#1E8A44',
+                        'xjtlu-gray': '#6B7280',
+                    },
+                    fontFamily: {
+                        sans: [
+                            '"Noto Sans SC"',
+                            '"PingFang SC"',
+                            '"Microsoft YaHei"',
+                            'ui-sans-serif',
+                            'system-ui',
+                            'sans-serif',
+                        ],
+                    },
+                    boxShadow: {
+                        'hotspot-active': '0 0 0 4px rgba(0, 75, 155, 0.5)',
+                        'hotspot-warn': '0 0 0 4px rgba(217, 48, 37, 0.5)',
+                    },
+                    keyframes: {
+                        'float-up': {
+                            '0%': { opacity: '1', transform: 'translateY(0px)' },
+                            '100%': { opacity: '0', transform: 'translateY(-48px)' },
+                        },
+                        'danger-pulse': {
+                            '0%, 100%': { 'box-shadow': 'inset 0 0 0px rgba(217,48,37,0)' },
+                            '50%': { 'box-shadow': 'inset 0 0 60px rgba(217,48,37,0.55)' },
+                        },
+                        'stat-bump': {
+                            '0%': { transform: 'scale(1)' },
+                            '40%': { transform: 'scale(1.18)' },
+                            '100%': { transform: 'scale(1)' },
+                        },
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0px)' },
+                        },
+                        'ripple': {
+                            '0%': { transform: 'scale(0)', opacity: '0.6' },
+                            '100%': { transform: 'scale(4)', opacity: '0' },
+                        },
+                    },
+                    animation: {
+                        'float-up': 'float-up 1.2s ease-out forwards',
+                        'danger-pulse': 'danger-pulse 1s ease-in-out infinite',
+                        'stat-bump': 'stat-bump 0.3s ease-out',
+                        'fade-in': 'fade-in 0.4s ease-out',
+                        'ripple': 'ripple 0.6s ease-out',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Google Fonts：Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- 全局样式 -->
+    <style>
+        /* 基础重置 */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 115%;
+        }
+
+        /* Lucide 图标全局规范 */
+        .lucide,
+        svg.lucide {
+            stroke-width: 2.5px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        /* 可复用按钮组件 */
+        .xjtlu-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+            border: 2.5px solid transparent;
+            cursor: pointer;
+            transition: background-color 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.1s ease,
+                box-shadow 0.15s ease;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .xjtlu-btn:active {
+            transform: scale(0.96);
+        }
+
+        .xjtlu-btn--primary {
+            background-color: #004B9B;
+            color: #ffffff;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--primary:hover {
+            background-color: #003366;
+            border-color: #003366;
+            box-shadow: 0 4px 14px rgba(0, 75, 155, 0.35);
+        }
+
+        .xjtlu-btn--secondary {
+            background-color: transparent;
+            color: #004B9B;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--secondary:hover {
+            background-color: rgba(0, 75, 155, 0.08);
+        }
+
+        .xjtlu-btn--ghost {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border-color: #e5e7eb;
+        }
+
+        .xjtlu-btn--ghost:hover {
+            background-color: #e5e7eb;
+        }
+
+        /* 卡片样式 */
+        .summary-card {
+            background: #ffffff;
+            border: 2.5px solid #003366;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 51, 102, 0.12);
+        }
+
+        /* 标签样式 */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            border: 1.5px solid transparent;
+        }
+
+        .tag-badge--blue {
+            background-color: rgba(0, 75, 155, 0.1);
+            border-color: #004B9B;
+            color: #004B9B;
+        }
+
+        .tag-badge--yellow {
+            background-color: rgba(255, 215, 0, 0.2);
+            border-color: #FFC200;
+            color: #7a5c00;
+        }
+
+        .tag-badge--red {
+            background-color: rgba(217, 48, 37, 0.1);
+            border-color: #D93025;
+            color: #D93025;
+        }
+
+        /* 动画 */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fade-in 0.35s ease-out both;
+        }
+
+        /* 飘字动画 */
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(-12px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-52px);
+            }
+        }
+
+        .floating-text {
+            position: absolute;
+            font-size: 1rem;
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            animation: float-up 1.2s ease-out forwards;
+            z-index: 9999;
+        }
+
+        /* 数值抖动动画 */
+        @keyframes stat-bump {
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.22);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stat-bump {
+            animation: stat-bump 0.3s ease-out;
+        }
+
+        /* 滚动条统一样式 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 75, 155, 0.3);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+    <!-- 导航栏 -->
+    <nav class="bg-xjtlu-navy text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                    <h1 class="text-xl font-bold">XJTLU Journey Simulator</h1>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="index.html" class="hover:text-xjtlu-yellow transition-colors">Overview</a>
+                    <a href="requirement.html"
+                        class="hover:text-xjtlu-yellow transition-colors font-bold">Requirement</a>
+                    <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
+                    <a href="implementation.html" class="hover:text-xjtlu-yellow transition-colors">Implementation</a>
+                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Evaluation</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- User Journey Map -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">User Journey Map</h2>
+            <div class="max-w-5xl mx-auto">
+                <div class="summary-card fade-in">
+                    <!-- Actor & Scenario -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
+                            <i data-lucide="user" class="w-6 h-6"></i>
+                            Actor & Scenario
+                        </h3>
+                        <p class="text-gray-700">
+                            <strong>Actor:</strong> XJTLU undergraduate students preparing for postgraduate studies
+                        </p>
+                        <p class="text-gray-700 mt-2">
+                            <strong>Scenario:</strong> Students aim to navigate their academic journey, build a strong
+                            profile, and secure offers from their dream universities.
+                        </p>
+                    </div>
+
+                    <!-- Journey Phases -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
+                            <i data-lucide="layers" class="w-6 h-6"></i>
+                            Phases
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 1: Onboarding</h4>
+                                <p class="text-sm text-gray-700">Setting goals and creating character</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 2: Exploration</h4>
+                                <p class="text-sm text-gray-700">Exploring campus and activities</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 3: Development</h4>
+                                <p class="text-sm text-gray-700">Building skills and profile</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 4: Outcome</h4>
+                                <p class="text-sm text-gray-700">Receiving offers and endings</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions & Thoughts -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
+                            <i data-lucide="brain" class="w-6 h-6"></i>
+                            Actions & Thoughts
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 1: Onboarding</h4>
+                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Create character, set
+                                    postgraduate goals, choose desired universities</p>
+                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "What do I want to study?
+                                    Which universities are best for me?"
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 2: Exploration</h4>
+                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Explore campus
+                                    buildings, participate in activities, meet characters</p>
+                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "What activities will help
+                                    me build my profile? How can I balance my time?"
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 3: Development</h4>
+                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Manage time, make
+                                    decisions, develop skills, build network</p>
+                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "Am I making the right
+                                    decisions? Am I on track for my goals?"
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Phase 4: Outcome</h4>
+                                <p class="text-sm text-gray-700 mb-2"><strong>Actions:</strong> Receive offers, reflect
+                                    on journey, plan next steps</p>
+                                <p class="text-sm text-gray-700"><strong>Thoughts:</strong> "Did I achieve my goals?
+                                    What could I have done differently?"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emotional Journey -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
+                            <i data-lucide="heart" class="w-6 h-6"></i>
+                            Emotional Journey
+                        </h3>
+                        <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                            <div class="relative h-40">
+                                <!-- Emotional curve -->
+                                <svg class="w-full h-full" viewBox="0 0 800 200">
+                                    <path d="M50,150 Q200,50 350,120 Q500,190 650,80 Q800,30 850,100" stroke="#004B9B"
+                                        stroke-width="3" fill="none" />
+                                    <!-- High points -->
+                                    <circle cx="200" cy="50" r="6" fill="#1E8A44" />
+                                    <circle cx="800" cy="30" r="6" fill="#1E8A44" />
+                                    <!-- Low points -->
+                                    <circle cx="500" cy="190" r="6" fill="#D93025" />
+                                    <!-- Labels -->
+                                    <text x="50" y="170" class="text-xs text-gray-700">Onboarding</text>
+                                    <text x="180" y="40" class="text-xs text-gray-700">Excitement</text>
+                                    <text x="330" y="140" class="text-xs text-gray-700">Exploration</text>
+                                    <text x="480" y="200" class="text-xs text-gray-700">Stress</text>
+                                    <text x="630" y="100" class="text-xs text-gray-700">Development</text>
+                                    <text x="800" y="20" class="text-xs text-gray-700">Achievement</text>
+                                </svg>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-4">
+                                Students experience a range of emotions throughout their journey, from initial
+                                excitement and curiosity to periods of stress and uncertainty, finally reaching a sense
+                                of achievement and reflection at the end.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Opportunities -->
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold mb-4 text-xjtlu-blue flex items-center gap-2">
+                            <i data-lucide="lightbulb" class="w-6 h-6"></i>
+                            Opportunities
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Academic Planning</h4>
+                                <p class="text-sm text-gray-700">Provide personalized academic advising and course
+                                    selection guidance based on career goals.</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Skill Development</h4>
+                                <p class="text-sm text-gray-700">Offer skill-building workshops and resources tailored
+                                    to specific fields of study.</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Networking</h4>
+                                <p class="text-sm text-gray-700">Facilitate connections with alumni, professors, and
+                                    industry professionals.</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Well-being Support</h4>
+                                <p class="text-sm text-gray-700">Provide resources for stress management and work-life
+                                    balance during the application process.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements List -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Requirements List</h2>
+            <div class="max-w-3xl mx-auto">
+                <div class="summary-card fade-in">
+                    <h3 class="text-xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-6 h-6"></i>
+                        Must-Haves for a Playful System
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0">
+                                1
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Engaging Game Mechanics</h4>
+                                <p class="text-gray-700">Interactive elements that make the learning process fun and
+                                    engaging, including exploration, decision-making, and feedback systems.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0">
+                                2
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Personalized Experience</h4>
+                                <p class="text-gray-700">Customizable character creation and tailored content based on
+                                    individual goals and interests.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white text-xl font-bold shrink-0">
+                                3
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xjtlu-navy mb-2">Meaningful Feedback</h4>
+                                <p class="text-gray-700">Clear and constructive feedback on decisions and progress,
+                                    helping students understand the impact of their choices.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Evidence of Life -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Evidence of Life</h2>
+            <div class="max-w-5xl mx-auto">
+                <div class="summary-card fade-in">
+                    <h3 class="text-xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="camera" class="w-6 h-6"></i>
+                        User Research & Observation
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                <i data-lucide="users" class="w-16 h-16 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy mb-2">Student Interview</h4>
+                            <p class="text-sm text-gray-700">Interview with XJTLU students about their postgraduate
+                                preparation challenges</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                <i data-lucide="book-open" class="w-16 h-16 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy mb-2">Academic Advisor Meeting</h4>
+                            <p class="text-sm text-gray-700">Discussion with academic advisors about student needs and
+                                challenges</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                <i data-lucide="map" class="w-16 h-16 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy mb-2">Campus Exploration</h4>
+                            <p class="text-sm text-gray-700">Observation of student activities and campus resources</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-16 h-16 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy mb-2">Survey Analysis</h4>
+                            <p class="text-sm text-gray-700">Analysis of survey responses from 50+ XJTLU students</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                            <div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                <i data-lucide="laptop" class="w-16 h-16 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy mb-2">Prototype Testing</h4>
+                            <p class="text-sm text-gray-700">User testing of early prototypes with target users</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-xjtlu-navy text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    <span class="text-xl font-bold">XJTLU Journey Simulator</span>
+                </div>
+                <div class="flex flex-col items-center md:items-end">
+                    <p class="text-sm opacity-80">© 2026 XJTLU Journey Simulator Team</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 初始化 Lucide 图标 -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
@@ -85,16 +85,29 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- 项目全局样式 -->
+    <!-- 全局样式 -->
     <style>
         /* 基础重置 */
         *,
         *::before,
         *::after {
             box-sizing: border-box;
+        }
+
+        html {
+            font-size: 115%;
+        }
+
+        /* Lucide 图标全局规范 */
+        .lucide,
+        svg.lucide {
+            stroke-width: 2.5px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
         }
 
         /* 可复用按钮组件 */
@@ -145,6 +158,16 @@
             background-color: rgba(0, 75, 155, 0.08);
         }
 
+        .xjtlu-btn--ghost {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border-color: #e5e7eb;
+        }
+
+        .xjtlu-btn--ghost:hover {
+            background-color: #e5e7eb;
+        }
+
         /* 卡片样式 */
         .summary-card {
             background: #ffffff;
@@ -152,6 +175,44 @@
             border-radius: 1rem;
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 51, 102, 0.12);
+        }
+
+        /* 标签样式 */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            border: 1.5px solid transparent;
+        }
+
+        .tag-badge--blue {
+            background-color: rgba(0, 75, 155, 0.1);
+            border-color: #004B9B;
+            color: #004B9B;
+        }
+
+        .tag-badge--yellow {
+            background-color: rgba(255, 215, 0, 0.2);
+            border-color: #FFC200;
+            color: #7a5c00;
+        }
+
+        .tag-badge--red {
+            background-color: rgba(217, 48, 37, 0.1);
+            border: 1px solid #D93025;
+            color: #D93025;
+        }
+
+        .tag-badge--green {
+            background-color: rgba(30, 138, 68, 0.1);
+            border: 1px solid #1E8A44;
+            color: #1E8A44;
         }
 
         /* 动画 */
@@ -171,14 +232,51 @@
             animation: fade-in 0.35s ease-out both;
         }
 
-        /* 团队成员卡片 */
-        .team-member-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* 飘字动画 */
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(-12px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-52px);
+            }
         }
 
-        .team-member-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 40px rgba(0, 51, 102, 0.15);
+        .floating-text {
+            position: absolute;
+            font-size: 1rem;
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            animation: float-up 1.2s ease-out forwards;
+            z-index: 9999;
+        }
+
+        /* 数值抖动动画 */
+        @keyframes stat-bump {
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.22);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stat-bump {
+            animation: stat-bump 0.3s ease-out;
         }
 
         /* 用户旅程图样式 */
@@ -211,6 +309,112 @@
                 transform: translateY(-50%);
             }
         }
+
+        /* 地图热区样式（用于User Journey map） */
+        .map-hotspot {
+            position: absolute;
+            border-radius: 9999px;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: box-shadow 0.2s ease, transform 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-hotspot--action {
+            width: 18px;
+            height: 18px;
+            background-color: #004B9B;
+            border: 2.5px solid #ffffff;
+            box-shadow: 0 0 0 3px #004B9B,
+                0 0 12px rgba(0, 75, 155, 0.5);
+            animation: hotspot-pulse 2.5s ease-in-out infinite;
+        }
+
+        .map-hotspot--action:hover {
+            background-color: #003366;
+            box-shadow: 0 0 0 3px #003366,
+                0 0 20px rgba(0, 75, 155, 0.7);
+            transform: translate(-50%, -50%) scale(1.25);
+        }
+
+        /* 热区脉冲动画 */
+        @keyframes hotspot-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 3px #004B9B, 0 0 8px rgba(0, 75, 155, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 5px #004B9B, 0 0 20px rgba(0, 75, 155, 0.7);
+            }
+        }
+
+        /* 地图 Pin 样式（用于User Journey map） */
+        .map-pin {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px 4px 6px;
+            border-radius: 9999px;
+            border: 2px solid transparent;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: transform 0.15s ease,
+                box-shadow 0.15s ease;
+            pointer-events: auto;
+            user-select: none;
+            line-height: 1;
+        }
+
+        .map-pin--action {
+            background-color: #004B9B;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 75, 155, 0.5),
+                0 0 0 2px rgba(0, 75, 155, 0.3);
+            animation: pin-pulse 2.5s ease-in-out infinite;
+        }
+
+        .map-pin--action:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+            box-shadow: 0 4px 16px rgba(0, 75, 155, 0.7),
+                0 0 0 3px rgba(0, 75, 155, 0.4);
+            animation: none;
+        }
+
+        /* Pin 脉冲动画 */
+        @keyframes pin-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 2px 8px rgba(0, 75, 155, 0.4), 0 0 0 2px rgba(0, 75, 155, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 2px 16px rgba(0, 75, 155, 0.7), 0 0 0 4px rgba(0, 75, 155, 0.3);
+            }
+        }
+
+        /* 滚动条统一样式 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 75, 155, 0.3);
+            border-radius: 9999px;
+        }
     </style>
 </head>
 
@@ -224,191 +428,374 @@
                     <h1 class="text-xl font-bold">XJTLU Journey Simulator</h1>
                 </div>
                 <div class="flex flex-wrap justify-center gap-4">
-                    <a href="index.html" class="hover:text-xjtlu-yellow transition-colors">Overview</a>
-                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Survey</a>
-                    <a href="personas.html" class="hover:text-xjtlu-yellow transition-colors">Personas</a>
-                    <a href="gameplay.html" class="hover:text-xjtlu-yellow transition-colors">Gameplay</a>
+                    <a href="index.html" class="hover:text-xjtlu-yellow transition-colors font-bold">Overview</a>
+                    <a href="requirement.html" class="hover:text-xjtlu-yellow transition-colors">Requirement</a>
                     <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
+                    <a href="implementation.html" class="hover:text-xjtlu-yellow transition-colors">Implementation</a>
+                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Evaluation</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- 英雄区域 -->
-    <section class="bg-gradient-to-br from-xjtlu-blue to-xjtlu-navy text-white py-20">
+    <!-- 1. Motivation & Research -->
+    <section id="motivation" class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-4xl md:text-5xl font-black mb-6">XJTLU Journey Simulator</h1>
-                <p class="text-xl mb-8 opacity-90">Experience the postgraduate application journey of XJTLU students,
-                    balancing academics, social life, and mental health</p>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="gameplay.html"
-                        class="xjtlu-btn xjtlu-btn--secondary text-white border-white hover:bg-white hover:text-xjtlu-navy">
-                        <i data-lucide="play-circle" class="w-4 h-4"></i>
-                        Learn Gameplay
-                    </a>
-                    <a href="https://github.com/cheese-block/XJTLU-CPT208-GroupB2-1" target="_blank"
-                        class="xjtlu-btn xjtlu-btn--secondary text-white border-white hover:bg-white hover:text-xjtlu-navy">
-                        <i data-lucide="code" class="w-4 h-4"></i>
-                        View Source Code
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 项目简介 -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Overview</h2>
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">
+                Motivation & Research
+            </h2>
+            <div class="max-w-5xl mx-auto space-y-12">
+                <!-- The Why -->
                 <div class="summary-card fade-in">
-                    <p class="text-lg mb-6">
-                        XJTLU Journey Simulator is an interactive game that simulates the postgraduate application
-                        process for XJTLU students. It aims to help students understand the various challenges and
-                        decisions involved in the application journey.
-                    </p>
-                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Core User Needs</h3>
-                    <ul class="list-disc list-inside space-y-2 mb-6">
-                        <li>Understand various choices and consequences in the application process</li>
-                        <li>Balance academics, social activities, and mental health</li>
-                        <li>Learn time management and resource allocation</li>
-                        <li>Experience different postgraduate application paths for various majors</li>
-                        <li>Understand how to improve application competitiveness</li>
-                    </ul>
-                    <h3 class="text-xl font-bold mb-4 text-xjtlu-blue">Game Features</h3>
-                    <ul class="list-disc list-inside space-y-2">
-                        <li>Realistic campus map and buildings</li>
-                        <li>Diverse events and choices</li>
-                        <li>Dynamic status management system</li>
-                        <li>Rich ending system</li>
-                        <li>Visual novel style story presentation</li>
-                    </ul>
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="compass" class="w-6 h-6"></i>The Why: We Chose the Active Track
+                    </h3>
+                    <div class="prose prose-lg max-w-none text-gray-700">
+                        <p class="mb-4">The XJTLU Journey Simulator was developed under the <strong>Active
+                                Track</strong> because we identified a critical gap in how undergraduate students at
+                            XJTLU prepare for their postgraduate applications. Through our research, we discovered that
+                            many students feel overwhelmed by the complexity of the postgraduate application process,
+                            uncertain about which universities and programs to target, and anxious about managing their
+                            time effectively between academic preparation and personal well-being.</p>
+                        <p class="mb-4">We chose the Active Track because it allows us to create an engaging, game-based
+                            learning experience that transforms the stressful application process into an interactive
+                            journey. Unlike passive information resources, our simulator enables students to
+                            <em>experience</em> different scenarios, make decisions, and witness the consequences in a
+                            safe environment.
+                        </p>
+                        <p>Furthermore, the Active Track enables us to incorporate elements of gamification—such as
+                            progress tracking, achievement systems, and multiple endings—which naturally motivate
+                            students to engage deeply with the material.</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- 用户旅程图 -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">User Journey Map</h2>
-            <div class="max-w-4xl mx-auto">
-                <!-- Final User Journey Map -->
+                <!-- The Gap -->
                 <div class="summary-card fade-in">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <!-- Header row -->
-                            <thead>
-                                <tr class="bg-xjtlu-navy text-white">
-                                    <th class="border border-gray-300 p-4 text-left">Stage</th>
-                                    <th class="border border-gray-300 p-4 text-left">Actions</th>
-                                    <th class="border border-gray-300 p-4 text-left">Emotions</th>
-                                    <th class="border border-gray-300 p-4 text-left">Pain Points</th>
-                                    <th class="border border-gray-300 p-4 text-left">Opportunities</th>
-                                </tr>
-                            </thead>
-                            <!-- Body rows -->
-                            <tbody>
-                                <!-- Stage 1 -->
-                                <tr class="bg-white">
-                                    <td class="border border-gray-300 p-4 font-bold">1. Start the Game</td>
-                                    <td class="border border-gray-300 p-4">Choose major, set goals</td>
-                                    <td class="border border-gray-300 p-4">Excitement, curiosity</td>
-                                    <td class="border border-gray-300 p-4">Uncertainty about process</td>
-                                    <td class="border border-gray-300 p-4">Provide clear guidance</td>
-                                </tr>
-                                <!-- Stage 2 -->
-                                <tr class="bg-white">
-                                    <td class="border border-gray-300 p-4 font-bold">2. Campus Exploration</td>
-                                    <td class="border border-gray-300 p-4">Explore buildings, participate in activities
-                                    </td>
-                                    <td class="border border-gray-300 p-4">Interest, engagement</td>
-                                    <td class="border border-gray-300 p-4">Overwhelming choices</td>
-                                    <td class="border border-gray-300 p-4">Highlight key locations</td>
-                                </tr>
-                                <!-- Stage 3 -->
-                                <tr class="bg-white">
-                                    <td class="border border-gray-300 p-4 font-bold">3. Event Interaction</td>
-                                    <td class="border border-gray-300 p-4">Face events, make decisions</td>
-                                    <td class="border border-gray-300 p-4">Engagement, challenge</td>
-                                    <td class="border border-gray-300 p-4">Decision paralysis</td>
-                                    <td class="border border-gray-300 p-4">Provide consequences preview</td>
-                                </tr>
-                                <!-- Stage 4 -->
-                                <tr class="bg-white">
-                                    <td class="border border-gray-300 p-4 font-bold">4. Status Management</td>
-                                    <td class="border border-gray-300 p-4">Balance academics, English, health</td>
-                                    <td class="border border-gray-300 p-4">Stress, pressure</td>
-                                    <td class="border border-gray-300 p-4">Overwhelm, time management</td>
-                                    <td class="border border-gray-300 p-4">Implement guidance system</td>
-                                </tr>
-                                <!-- Stage 5 -->
-                                <tr class="bg-white">
-                                    <td class="border border-gray-300 p-4 font-bold">5. Ending Presentation</td>
-                                    <td class="border border-gray-300 p-4">Receive application result</td>
-                                    <td class="border border-gray-300 p-4">Relief, satisfaction</td>
-                                    <td class="border border-gray-300 p-4">Disappointment if result is not ideal</td>
-                                    <td class="border border-gray-300 p-4">Provide constructive feedback</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="search" class="w-6 h-6"></i>The Gap: Literature & Product Review
+                    </h3>
+
+                    <div class="mb-8">
+                        <h4 class="text-xl font-bold mb-4 text-xjtlu-navy">Academic Papers Reviewed (4)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">Landers & Callan (2011) - Gamification in
+                                    Education</h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Established theoretical framework for gamification effects</li>
+                                            <li>Measured both intrinsic and extrinsic motivation</li>
+                                            <li>Provided empirical evidence for engagement increase</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Lack of longitudinal studies on retention</li>
+                                            <li>Limited focus on emotional aspects</li>
+                                            <li>No specific implementation guidelines</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">Wang & Liu (2012) - Game-Based Learning</h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Compared GBL vs traditional instruction</li>
+                                            <li>Measured learning outcomes quantitatively</li>
+                                            <li>Identified optimal game design principles</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Ignored individual learning differences</li>
+                                            <li>Limited sample diversity</li>
+                                            <li>No long-term impact assessment</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">Reys et al. (2018) - Decision Making in Games
+                                </h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Studied cognitive load in decision-making</li>
+                                            <li>Provided framework for choice architecture</li>
+                                            <li>Identified emotional factors in decisions</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Lack of real-world application context</li>
+                                            <li>No consideration of time pressure</li>
+                                            <li>Missing stakeholder perspectives</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">Wouters et al. (2013) - UX in Educational
+                                    Games</h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Comprehensive UX evaluation methodology</li>
+                                            <li>Balanced fun and learning aspects</li>
+                                            <li>Considered player motivation types</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Did not address anxiety reduction</li>
+                                            <li>Limited cultural context consideration</li>
+                                            <li>Lacked mobile/online implementation</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xl font-bold mb-4 text-xjtlu-navy">Commercial Products Reviewed (4)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">Unigo - College Recruitment Game</h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Engaging narrative-driven experience</li>
+                                            <li>Real university partnership for authenticity</li>
+                                            <li>Social media integration features</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Focuses only on US universities</li>
+                                            <li>Lacks time management simulation</li>
+                                            <li>No mental health/well-being tracking</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">Scholly - Scholarship App</h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Personalized scholarship matching</li>
+                                            <li>Clean, intuitive interface</li>
+                                            <li>Progress tracking system</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>No simulation of application process</li>
+                                            <li>Lacks decision consequence modeling</li>
+                                            <li>No gamification elements</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">ApplyKit - Application Tracker</h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Comprehensive deadline management</li>
+                                            <li>Document organization features</li>
+                                            <li>Multi-university comparison tools</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>No interactive learning elements</li>
+                                            <li>Lacks simulation of outcomes</li>
+                                            <li>Doesn't address stress/anxiety</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-bold text-xjtlu-navy mb-2">Edsby - Learning Platform</h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div><span class="tag-badge tag-badge--green mb-1">What They Did Well</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Strong analytics and reporting</li>
+                                            <li>Real-time communication features</li>
+                                            <li>Integration with existing systems</li>
+                                        </ul>
+                                    </div>
+                                    <div><span class="tag-badge tag-badge--red mb-1">What They Missed</span>
+                                        <ul class="text-sm text-gray-700 list-disc pl-4">
+                                            <li>Not specifically for postgraduate prep</li>
+                                            <li>Lacks game-based elements</li>
+                                            <li>Overly complex for students</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- 团队成员 -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Team Members</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- 成员 1 -->
-                <div class="team-member-card summary-card fade-in">
-                    <div class="flex flex-col items-center text-center">
-                        <div
-                            class="w-24 h-24 rounded-full bg-xjtlu-blue flex items-center justify-center text-white mb-4">
-                            <i data-lucide="user" class="w-12 h-12"></i>
+                <!-- The Stakeholders -->
+                <div class="summary-card fade-in">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="users" class="w-6 h-6"></i>The Stakeholders: Personas
+                    </h3>
+                    <p class="text-gray-700 mb-6">We identified primary and secondary users with distinct personas to
+                        guide our design process:</p>
+                    <div>
+                        <h4 class="text-xl font-bold mb-4 text-xjtlu-navy flex items-center gap-2"><span
+                                class="tag-badge tag-badge--blue">Primary</span>XJTLU Students</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-16 h-16 bg-xjtlu-blue rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                                        L</div>
+                                    <div>
+                                        <h5 class="font-bold text-xjtlu-navy">Ziheng Li</h5>
+                                        <p class="text-sm text-gray-600 mb-2">21 years old · Junior · Information and
+                                            Computing Science</p>
+                                        <div class="flex flex-wrap gap-2 mb-2"><span
+                                                class="tag-badge tag-badge--blue">Primary User</span><span
+                                                class="tag-badge tag-badge--yellow">Tech-savvy</span></div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Background:</strong> Ziheng Li is a
+                                        third-year undergraduate majoring in Information and Computing Science at XJTLU.
+                                        He is actively preparing for postgraduate studies but feels overwhelmed by the
+                                        choices and requirements.</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Goals:</strong> Get into a top UK CS
+                                        program, build strong technical portfolio, balance academic performance with
+                                        extracurricular activities</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Pain Points:</strong> Confused by
+                                        multiple requirements, anxious about time management, feels overwhelmed by
+                                        competition for top universities</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Needs:</strong> Clear roadmap,
+                                        realistic simulation, feedback on decisions</p>
+                                    <p class="text-sm text-gray-700"><strong>How the Simulator Helps:</strong> The XJTLU
+                                        Journey Simulator helps Ziheng by allowing him to test different approaches to
+                                        building his profile, providing feedback on the impact of his decisions, and
+                                        helping him develop a more strategic approach to his postgraduate preparation.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-16 h-16 bg-xjtlu-light rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                                        C</div>
+                                    <div>
+                                        <h5 class="font-bold text-xjtlu-navy">Zhenyu Chen</h5>
+                                        <p class="text-sm text-gray-600 mb-2">20 years old · Sophomore · Electrical
+                                            Engineering</p>
+                                        <div class="flex flex-wrap gap-2 mb-2"><span
+                                                class="tag-badge tag-badge--blue">Primary User</span><span
+                                                class="tag-badge tag-badge--yellow">Novice</span></div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Background:</strong> Zhenyu Chen is a
+                                        second-year undergraduate majoring in Electrical Engineering at XJTLU. He is
+                                        starting to think about postgraduate studies but has limited knowledge about the
+                                        application process.</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Goals:</strong> Explore options, find
+                                        right postgraduate direction, learn about the postgraduate application process,
+                                        improve academic performance</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Pain Points:</strong> No clear
+                                        direction, overwhelmed by choices, uncertain about how to prepare for
+                                        postgraduate applications</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Needs:</strong> Simplified guidance,
+                                        low-pressure exploration, understand requirements</p>
+                                    <p class="text-sm text-gray-700"><strong>How the Simulator Helps:</strong> The XJTLU
+                                        Journey Simulator helps Zhenyu by providing a realistic simulation of the
+                                        postgraduate application process, allowing him to experiment with different
+                                        strategies and learn from the outcomes without real-world consequences.</p>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-1">Yiguan Zhang</h3>
-                        <p class="text-xjtlu-gray mb-3">Student ID: 2362131</p>
                     </div>
-                </div>
-
-                <!-- 成员 2 -->
-                <div class="team-member-card summary-card fade-in" style="animation-delay: 0.1s;">
-                    <div class="flex flex-col items-center text-center">
-                        <div
-                            class="w-24 h-24 rounded-full bg-xjtlu-blue flex items-center justify-center text-white mb-4">
-                            <i data-lucide="user" class="w-12 h-12"></i>
+                    <div class="mt-6">
+                        <h4 class="text-xl font-bold mb-4 text-xjtlu-navy flex items-center gap-2"><span
+                                class="tag-badge tag-badge--yellow">Secondary</span>Parents</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-16 h-16 bg-xjtlu-gray rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                                        L</div>
+                                    <div>
+                                        <h5 class="font-bold text-xjtlu-navy">Mr. Li</h5>
+                                        <p class="text-sm text-gray-600 mb-2">45 years old</p>
+                                        <div class="flex flex-wrap gap-2 mb-2"><span
+                                                class="tag-badge tag-badge--yellow">Secondary User</span><span
+                                                class="tag-badge tag-badge--yellow">Supportive</span></div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Background:</strong> Mr. Li is a
+                                        parent who places great importance on his child's education and future academic
+                                        success. He is actively involved in supporting his child's postgraduate
+                                        preparation journey.</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Goals:</strong> Help his child
+                                        navigate the postgraduate application process, ensure his child has access to
+                                        necessary resources, support his child's academic and personal development</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Pain Points:</strong> Uncertain about
+                                        how to best support his child's postgraduate plans, concerned about the
+                                        complexity of the application process, wants to ensure his child makes informed
+                                        decisions</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Needs:</strong> Clear guidance on
+                                        postgraduate preparation, tools to help his child make informed decisions,
+                                        resources to support his child's academic journey</p>
+                                    <p class="text-sm text-gray-700"><strong>How the Simulator Helps:</strong> The XJTLU
+                                        Journey Simulator helps Mr. Li by providing a clear framework for understanding
+                                        the postgraduate preparation process, allowing him to better support his child's
+                                        academic journey.</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="w-16 h-16 bg-xjtlu-gray rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                                        W</div>
+                                    <div>
+                                        <h5 class="font-bold text-xjtlu-navy">Mrs. Wang</h5>
+                                        <p class="text-sm text-gray-600 mb-2">42 years old</p>
+                                        <div class="flex flex-wrap gap-2 mb-2"><span
+                                                class="tag-badge tag-badge--yellow">Secondary User</span><span
+                                                class="tag-badge tag-badge--yellow">Involved</span></div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Background:</strong> Mrs. Wang is a
+                                        parent who is deeply invested in her child's educational success. She is
+                                        particularly focused on helping her child plan for postgraduate studies and
+                                        future career opportunities.</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Goals:</strong> Support her child in
+                                        developing a strong academic profile, help her child explore postgraduate
+                                        options, ensure her child is well-prepared for the application process</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Pain Points:</strong> Concerned about
+                                        her child's stress levels during the application process, unsure about how to
+                                        guide her child's decision-making, wants to ensure her child's efforts lead to
+                                        successful outcomes</p>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Needs:</strong> Resources to help her
+                                        child manage stress, tools to support informed decision-making, guidance on
+                                        creating a comprehensive postgraduate preparation plan</p>
+                                    <p class="text-sm text-gray-700"><strong>How the Simulator Helps:</strong> The XJTLU
+                                        Journey Simulator helps Mrs. Wang by providing a stress-free environment for her
+                                        child to explore different postgraduate preparation strategies, allowing her to
+                                        better support her child's well-being and academic success.</p>
+                                </div>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-1">Wenhan Wang</h3>
-                        <p class="text-xjtlu-gray mb-3">Student ID: 2362355</p>
-                    </div>
-                </div>
-
-                <!-- 成员 3 -->
-                <div class="team-member-card summary-card fade-in" style="animation-delay: 0.2s;">
-                    <div class="flex flex-col items-center text-center">
-                        <div
-                            class="w-24 h-24 rounded-full bg-xjtlu-blue flex items-center justify-center text-white mb-4">
-                            <i data-lucide="user" class="w-12 h-12"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-1">Zewei Li</h3>
-                        <p class="text-xjtlu-gray mb-3">Student ID: 2363721</p>
-                    </div>
-                </div>
-
-                <!-- 成员 4 -->
-                <div class="team-member-card summary-card fade-in" style="animation-delay: 0.3s;">
-                    <div class="flex flex-col items-center text-center">
-                        <div
-                            class="w-24 h-24 rounded-full bg-xjtlu-blue flex items-center justify-center text-white mb-4">
-                            <i data-lucide="user" class="w-12 h-12"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-1">Juntao He</h3>
-                        <p class="text-xjtlu-gray mb-3">Student ID: 2363044</p>
                     </div>
                 </div>
             </div>

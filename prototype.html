@@ -94,6 +94,22 @@
             box-sizing: border-box;
         }
 
+        html {
+            font-size: 115%;
+        }
+
+        /* Lucide 图标全局规范 */
+        .lucide,
+        svg.lucide {
+            stroke-width: 2.5px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
         /* 可复用按钮组件 */
         .xjtlu-btn {
             display: inline-flex;
@@ -143,14 +159,13 @@
         }
 
         .xjtlu-btn--ghost {
-            background-color: transparent;
-            color: #6B7280;
-            border-color: transparent;
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border-color: #e5e7eb;
         }
 
         .xjtlu-btn--ghost:hover {
-            background-color: rgba(107, 114, 128, 0.1);
-            color: #374151;
+            background-color: #e5e7eb;
         }
 
         /* 卡片样式 */
@@ -166,65 +181,38 @@
         .tag-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
+            gap: 0.25rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
             white-space: nowrap;
+            border: 1.5px solid transparent;
         }
 
         .tag-badge--blue {
             background-color: rgba(0, 75, 155, 0.1);
+            border-color: #004B9B;
             color: #004B9B;
-            border: 1px solid rgba(0, 75, 155, 0.2);
         }
 
         .tag-badge--yellow {
-            background-color: rgba(255, 194, 0, 0.1);
-            color: #FFC200;
-            border: 1px solid rgba(255, 194, 0, 0.2);
+            background-color: rgba(255, 215, 0, 0.2);
+            border-color: #FFC200;
+            color: #7a5c00;
         }
 
         .tag-badge--red {
             background-color: rgba(217, 48, 37, 0.1);
+            border-color: #D93025;
             color: #D93025;
-            border: 1px solid rgba(217, 48, 37, 0.2);
         }
 
-        /* 地图标记样式 */
-        .map-pin {
-            position: absolute;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 30;
-            transition: all 0.2s ease;
-        }
-
-        .map-pin--action {
-            background-color: #004B9B;
-            color: white;
-        }
-
-        .map-pin--info {
-            background-color: #6B7280;
-            color: white;
-        }
-
-        .map-pin__icon {
-            width: 16px;
-            height: 16px;
-        }
-
-        .map-pin__label {
-            font-size: 10px;
-            font-weight: bold;
-            margin-left: 2px;
+        .tag-badge--green {
+            background-color: rgba(30, 138, 68, 0.1);
+            border-color: #1E8A44;
+            color: #1E8A44;
         }
 
         /* 动画 */
@@ -244,21 +232,65 @@
             animation: fade-in 0.35s ease-out both;
         }
 
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .map-pin {
-                width: 28px;
-                height: 28px;
+        /* 飘字动画 */
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0px);
             }
 
-            .map-pin__icon {
-                width: 14px;
-                height: 14px;
+            20% {
+                opacity: 1;
+                transform: translateY(-12px);
             }
 
-            .map-pin__label {
-                font-size: 8px;
+            100% {
+                opacity: 0;
+                transform: translateY(-52px);
             }
+        }
+
+        .floating-text {
+            position: absolute;
+            font-size: 1rem;
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            animation: float-up 1.2s ease-out forwards;
+            z-index: 9999;
+        }
+
+        /* 数值抖动动画 */
+        @keyframes stat-bump {
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.22);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stat-bump {
+            animation: stat-bump 0.3s ease-out;
+        }
+
+        /* 滚动条统一样式 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 75, 155, 0.3);
+            border-radius: 9999px;
         }
     </style>
 </head>
@@ -274,10 +306,10 @@
                 </div>
                 <div class="flex flex-wrap justify-center gap-4">
                     <a href="index.html" class="hover:text-xjtlu-yellow transition-colors">Overview</a>
-                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Survey</a>
-                    <a href="personas.html" class="hover:text-xjtlu-yellow transition-colors">Personas</a>
-                    <a href="gameplay.html" class="hover:text-xjtlu-yellow transition-colors">Gameplay</a>
-                    <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
+                    <a href="requirement.html" class="hover:text-xjtlu-yellow transition-colors">Requirement</a>
+                    <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors font-bold">Prototype</a>
+                    <a href="implementation.html" class="hover:text-xjtlu-yellow transition-colors">Implementation</a>
+                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Evaluation</a>
                 </div>
             </div>
         </div>
@@ -288,322 +320,275 @@
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">Project Prototype</h2>
             <div class="max-w-6xl mx-auto">
-                <!-- 主菜单 -->
+                <!-- The "Crazy Eights" -->
                 <div class="summary-card fade-in mb-12">
-                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Main Menu</h3>
-                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
-                        <div
-                            class="w-full h-[400px] bg-white rounded-lg flex items-center justify-center relative overflow-hidden">
-                            <!-- 背景装饰 -->
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="pencil" class="w-6 h-6"></i>
+                        The "Crazy Eights"
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Photos of 8 rapid hand-drawn sketches of different UI ideas exploring various design concepts
+                        for XJTLU Journey Simulator.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
                             <div
-                                class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-xjtlu-navy opacity-[0.04] pointer-events-none">
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
                             </div>
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 1: Main Menu</h4>
+                            <p class="text-xs text-gray-600 mt-1">Initial concept for game entry point</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
                             <div
-                                class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-xjtlu-blue opacity-[0.04] pointer-events-none">
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
                             </div>
-
-                            <!-- 主内容区 -->
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 2: Character Creation</h4>
+                            <p class="text-xs text-gray-600 mt-1">Player customization interface</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
                             <div
-                                class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-12 md:gap-20 px-8 w-full max-w-4xl">
-                                <!-- 左栏：吉祥物 -->
-                                <div class="flex flex-col items-center gap-4">
-                                    <div class="w-44 h-44 drop-shadow-lg">
-                                        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img"
-                                            aria-label="疲惫白鹅吉祥物" style="width:100%;height:100%;">
-                                            <ellipse cx="60" cy="78" rx="30" ry="28" fill="#F0F4FF" stroke="#003366"
-                                                stroke-width="3.5" stroke-linecap="round" />
-                                            <circle cx="60" cy="38" r="20" fill="#F0F4FF" stroke="#003366"
-                                                stroke-width="3.5" />
-                                            <rect x="50" y="54" width="20" height="8" fill="#F0F4FF" stroke="none" />
-                                            <path d="M72 38 L84 35 L72 42 Z" fill="#FFC200" stroke="#003366"
-                                                stroke-width="2" stroke-linejoin="round" />
-                                            <ellipse cx="53" cy="36" rx="5" ry="3.5" fill="#003366" opacity="0.18" />
-                                            <ellipse cx="67" cy="36" rx="5" ry="3.5" fill="#003366" opacity="0.18" />
-                                            <circle cx="53" cy="36" r="2.5" fill="#003366" />
-                                            <circle cx="54" cy="35" r="0.8" fill="white" />
-                                            <circle cx="67" cy="36" r="2.5" fill="#003366" />
-                                            <circle cx="68" cy="35" r="0.8" fill="white" />
-                                            <path d="M49 30 Q53 32 57 30" stroke="#003366" stroke-width="2.5"
-                                                fill="none" stroke-linecap="round" />
-                                            <path d="M63 30 Q67 32 71 30" stroke="#003366" stroke-width="2.5"
-                                                fill="none" stroke-linecap="round" />
-                                            <path d="M42 65 Q60 60 78 65" stroke="#004B9B" stroke-width="3" fill="none"
-                                                stroke-linecap="round" />
-                                            <path d="M30 75 Q20 68 24 58 Q32 65 40 72" fill="#E8EFFF" stroke="#003366"
-                                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M90 75 Q100 68 96 58 Q88 65 80 72" fill="#E8EFFF" stroke="#003366"
-                                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M50 104 L46 112 M46 112 L42 115 M46 112 L50 115" stroke="#FFC200"
-                                                stroke-width="3" fill="none" stroke-linecap="round" />
-                                            <path d="M70 104 L74 112 M74 112 L70 115 M74 112 L78 115" stroke="#FFC200"
-                                                stroke-width="3" fill="none" stroke-linecap="round" />
-                                        </svg>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="tag-badge tag-badge--blue text-xs">
-                                            <i data-lucide="cpu" class="w-3 h-3"></i>
-                                            SAT · 先进计算学院
-                                        </span>
-                                    </div>
-                                    <p class="text-center text-xs text-xjtlu-gray max-w-[180px] leading-relaxed italic">
-                                        "申研这件事，<br>越早准备越好。"
-                                    </p>
-                                </div>
-
-                                <!-- 右栏：标题 + 按钮组 -->
-                                <div class="flex flex-col items-start gap-6 w-full max-w-xs">
-                                    <div class="flex flex-col gap-1">
-                                        <p class="text-xs font-bold text-xjtlu-blue tracking-[0.25em] uppercase">XJTLU
-                                            Postgrad Simulator</p>
-                                        <h1 class="text-4xl font-black text-xjtlu-navy leading-tight">
-                                            西浦<br>申研模拟器
-                                        </h1>
-                                        <p class="text-sm text-xjtlu-gray mt-1 leading-relaxed">
-                                            每一个抉择，都决定你的 Offer。
-                                        </p>
-                                    </div>
-                                    <div class="w-full h-px bg-gray-100"></div>
-                                    <div class="flex flex-col gap-3 w-full">
-                                        <button
-                                            class="xjtlu-btn xjtlu-btn--primary w-full justify-center text-base py-3">
-                                            <i data-lucide="play" class="w-4 h-4"></i>
-                                            开始游戏
-                                        </button>
-                                        <button class="xjtlu-btn xjtlu-btn--secondary w-full justify-center">
-                                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                                            重新开始
-                                        </button>
-                                        <button class="xjtlu-btn xjtlu-btn--ghost w-full justify-center">
-                                            <i data-lucide="book-open" class="w-4 h-4"></i>
-                                            怎么玩？
-                                        </button>
-                                    </div>
-                                    <p class="text-[0.65rem] text-gray-300 tracking-widest self-end">
-                                        v1.0 · MVP Demo
-                                    </p>
-                                </div>
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
                             </div>
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 3: Campus Map</h4>
+                            <p class="text-xs text-gray-600 mt-1">Interactive exploration layout</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
+                            <div
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 4: Event System</h4>
+                            <p class="text-xs text-gray-600 mt-1">Decision-making interface</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
+                            <div
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 5: Profile Display</h4>
+                            <p class="text-xs text-gray-600 mt-1">Stats and achievements view</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
+                            <div
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 6: Time Management</h4>
+                            <p class="text-xs text-gray-600 mt-1">Calendar and scheduling system</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
+                            <div
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 7: Ending Screen</h4>
+                            <p class="text-xs text-gray-600 mt-1">Results and outcomes display</p>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg p-4 text-center">
+                            <div
+                                class="w-full h-48 bg-white rounded-lg mb-3 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <i data-lucide="image" class="w-12 h-12 text-gray-400"></i>
+                            </div>
+                            <h4 class="font-bold text-xjtlu-navy text-sm">Sketch 8: Navigation</h4>
+                            <p class="text-xs text-gray-600 mt-1">Menu and control layout</p>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600">
-                        The main menu provides options to start a new game, continue a saved game, and access game
-                        instructions.
-                        It features the game's mascot and title, creating an engaging first impression for players.
-                    </p>
                 </div>
 
-                <!-- 校园地图 -->
+                <!-- Design Alternatives -->
                 <div class="summary-card fade-in mb-12">
-                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Campus Map</h3>
-                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
-                        <div class="w-full h-[500px] bg-white rounded-lg flex overflow-hidden">
-                            <!-- 左侧：地图区 -->
-                            <div class="relative flex-[65] overflow-hidden bg-gray-100">
-                                <div id="map-wrap" class="relative w-full h-full">
-                                    <img id="campus-map-img" src="images/campus_map.png" alt="西浦校园平面图"
-                                        class="w-full h-full object-contain select-none" draggable="false" />
-                                    <!-- Pin 层 -->
-                                    <div id="hotspot-layer" class="absolute pointer-events-none"
-                                        style="left:0;top:0;width:100%;height:100%;">
-                                        <!-- 示例 Pin -->
-                                        <button class="map-pin map-pin--action" data-building-id="fb"
-                                            title="Founder's Building" aria-label="Founder's Building"
-                                            style="left:25%;top:30%;display:block;">
-                                            <i data-lucide="building" class="lucide map-pin__icon"></i>
-                                            <span class="map-pin__label">FB</span>
-                                        </button>
-                                        <button class="map-pin map-pin--action" data-building-id="cb"
-                                            title="Central Building" aria-label="Central Building"
-                                            style="left:50%;top:40%;display:block;">
-                                            <i data-lucide="building-2" class="lucide map-pin__icon"></i>
-                                            <span class="map-pin__label">CB</span>
-                                        </button>
-                                        <button class="map-pin map-pin--info" data-building-id="dorm" title="Dormitory"
-                                            aria-label="Dormitory" style="left:75%;top:60%;display:block;">
-                                            <i data-lucide="home" class="lucide map-pin__icon"></i>
-                                            <span class="map-pin__label">宿舍</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <!-- 结束本月按钮 -->
-                                <div class="absolute bottom-4 right-4 z-40">
-                                    <button id="btn-end-month" class="xjtlu-btn xjtlu-btn--primary text-sm shadow-lg">
-                                        <i data-lucide="skip-forward" class="w-4 h-4"></i>
-                                        结束本月
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- 右侧：信息面板 -->
-                            <div id="right-sidebar"
-                                class="flex-[35] flex flex-col border-l-2 border-gray-200 bg-white overflow-hidden">
-                                <!-- 上半部：建筑信息 -->
-                                <div id="info-panel"
-                                    class="flex-1 flex flex-col overflow-hidden border-b-2 border-gray-100">
-                                    <div
-                                        class="flex-1 flex flex-col items-center justify-center gap-3 px-6 text-center">
-                                        <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center">
-                                            <i data-lucide="map-pin" class="w-6 h-6 text-xjtlu-gray"></i>
-                                        </div>
-                                        <p class="text-sm font-bold text-xjtlu-navy">点击地图上的建筑</p>
-                                        <p class="text-xs text-xjtlu-gray leading-relaxed">
-                                            蓝色标记可消耗 AP 执行活动<br>灰色标记仅供了解
-                                        </p>
-                                        <div class="mt-4 flex flex-col gap-2 w-full max-w-[180px]">
-                                            <div class="flex items-center gap-2 text-xs text-xjtlu-gray">
-                                                <div class="w-3 h-3 rounded-full bg-xjtlu-blue shrink-0"></div>
-                                                可执行行动的建筑
-                                            </div>
-                                            <div class="flex items-center gap-2 text-xs text-xjtlu-gray">
-                                                <div class="w-3 h-3 rounded-full bg-gray-400 shrink-0"></div>
-                                                纯科普建筑
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="shrink-0 border-t border-gray-100 px-5 py-3 flex items-center gap-2 text-xs text-xjtlu-gray">
-                                        <i data-lucide="zap" class="w-3.5 h-3.5 text-xjtlu-blue"></i>
-                                        本月剩余行动点显示在顶部状态栏
-                                    </div>
-                                </div>
-
-                                <!-- 下半部：个人简历与状态 -->
-                                <div id="player-status-panel"
-                                    class="h-[42%] shrink-0 flex flex-col bg-gray-50 overflow-hidden">
-                                    <div
-                                        class="px-5 py-3 border-b border-gray-200 bg-white flex items-center justify-between">
-                                        <h3 class="text-sm font-black text-xjtlu-navy flex items-center gap-1.5">
-                                            <i data-lucide="contact" class="w-4 h-4"></i>
-                                            我的申请履历
-                                        </h3>
-                                        <i data-lucide="help-circle" class="w-4 h-4 text-xjtlu-gray cursor-help"></i>
-                                    </div>
-                                    <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
-                                        <!-- 硬件条件 -->
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <div
-                                                class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-1">
-                                                <span
-                                                    class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">累计
-                                                    GPA</span>
-                                                <span class="text-lg font-black text-xjtlu-green">3.50</span>
-                                            </div>
-                                            <div
-                                                class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-1">
-                                                <span
-                                                    class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">雅思成绩</span>
-                                                <span class="text-lg font-black text-xjtlu-blue">7.0</span>
-                                            </div>
-                                        </div>
-                                        <!-- 软背景 -->
-                                        <div class="flex flex-col gap-2">
-                                            <span
-                                                class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">软背景积累</span>
-                                            <div class="flex flex-wrap gap-2">
-                                                <span class="tag-badge tag-badge--blue">一段实习</span>
-                                                <span class="tag-badge tag-badge--blue">一段科研</span>
-                                            </div>
-                                        </div>
-                                        <div class="h-px bg-gray-200 my-1"></div>
-                                        <!-- 活跃 Buff -->
-                                        <div class="flex flex-col gap-2">
-                                            <span
-                                                class="text-[0.65rem] font-bold text-xjtlu-gray uppercase tracking-wider">活跃状态
-                                                (Buffs)</span>
-                                            <div class="flex flex-wrap gap-2">
-                                                <span class="tag-badge tag-badge--yellow">
-                                                    <i data-lucide="users" class="w-3 h-3"></i>
-                                                    雅思搭子
-                                                </span>
-                                                <span class="tag-badge tag-badge--red">
-                                                    <i data-lucide="frown" class="w-3 h-3"></i>
-                                                    压力过大
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600">
-                        The campus map is the main gameplay interface where players can explore different buildings and
-                        perform actions.
-                        Each building offers different activities that consume Action Points (AP) and affect the
-                        player's stats.
-                        The right sidebar displays building information and the player's current status, including GPA,
-                        IELTS score, and active buffs.
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="git-compare" class="w-6 h-6"></i>
+                        Design Alternatives
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Comparison of different design approaches and rationale behind the chosen solution.
                     </p>
-                </div>
 
-                <!-- 事件系统 -->
-                <div class="summary-card fade-in mb-12">
-                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Event System</h3>
-                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
-                        <div class="bg-white rounded-lg p-6">
-                            <div class="flex items-center gap-4 mb-4">
+                    <div class="space-y-8">
+                        <!-- Alternative 1 -->
+                        <div class="border-2 border-gray-200 rounded-lg p-6">
+                            <div class="flex items-start gap-4 mb-4">
                                 <div
-                                    class="w-12 h-12 rounded-full bg-xjtlu-blue flex items-center justify-center text-white">
-                                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                                    class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold shrink-0">
+                                    A
                                 </div>
                                 <div>
-                                    <h4 class="font-bold">Midterm Exam</h4>
-                                    <p class="text-sm text-gray-600">October 15, 2024</p>
+                                    <h4 class="text-xl font-bold text-xjtlu-navy">Alternative A: Traditional Menu-Based
+                                        Interface</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Linear progression with standard menu
+                                        navigation</p>
                                 </div>
                             </div>
-                            <p class="mb-4">
-                                You have a midterm exam next week. How will you prepare?
-                            </p>
-                            <div class="space-y-3">
-                                <button
-                                    class="w-full text-left p-3 border border-xjtlu-blue bg-xjtlu-blue/5 rounded-lg hover:bg-xjtlu-blue hover:text-white">
-                                    Study intensively (Academic +3, Mental -1)
-                                </button>
-                                <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-                                    Balance study and rest (Academic +1, Mental +1)
-                                </button>
-                                <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-                                    Focus on other activities (No change)
-                                </button>
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <h5 class="font-bold text-gray-700 mb-2">Key Features:</h5>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Sequential level-based progression</li>
+                                    <li>Standard dropdown menus for navigation</li>
+                                    <li>Text-heavy information display</li>
+                                    <li>Minimal visual feedback</li>
+                                </ul>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="tag-badge tag-badge--red">Not Selected</span>
+                                <span class="text-gray-600">Too rigid and lacks engagement for modern students</span>
+                            </div>
+                        </div>
+
+                        <!-- Alternative 2 -->
+                        <div class="border-2 border-gray-200 rounded-lg p-6">
+                            <div class="flex items-start gap-4 mb-4">
+                                <div
+                                    class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold shrink-0">
+                                    B
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold text-xjtlu-navy">Alternative B: Gamified Interactive
+                                        Map</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Visual exploration with game-like mechanics
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <h5 class="font-bold text-gray-700 mb-2">Key Features:</h5>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Interactive campus map with hotspots</li>
+                                    <li>Real-time stat tracking and feedback</li>
+                                    <li>Visual character progression</li>
+                                    <li>Choice-based narrative system</li>
+                                </ul>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="tag-badge tag-badge--green">Selected</span>
+                                <span class="text-gray-600">Best balance of engagement and educational value</span>
+                            </div>
+                        </div>
+
+                        <!-- Alternative 3 -->
+                        <div class="border-2 border-gray-200 rounded-lg p-6">
+                            <div class="flex items-start gap-4 mb-4">
+                                <div
+                                    class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold shrink-0">
+                                    C
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold text-xjtlu-navy">Alternative C: Social Network Style
+                                        Interface</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Connection-focused with peer interaction
+                                        emphasis</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <h5 class="font-bold text-gray-700 mb-2">Key Features:</h5>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Profile-based navigation</li>
+                                    <li>Social networking elements</li>
+                                    <li>Peer comparison and ranking</li>
+                                    <li>Community-driven content</li>
+                                </ul>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="tag-badge tag-badge--red">Not Selected</span>
+                                <span class="text-gray-600">May create unnecessary competition and stress</span>
                             </div>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600">
-                        The event system presents players with various scenarios that require decision-making.
-                        Each choice affects the player's stats and can lead to different outcomes in the game.
-                    </p>
+
+                    <div class="mt-8 bg-xjtlu-blue/10 border border-xjtlu-blue rounded-lg p-6">
+                        <h4 class="font-bold text-xjtlu-blue mb-3 flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            Why Alternative B Was Chosen
+                        </h4>
+                        <p class="text-gray-700 mb-4">
+                            Alternative B (Gamified Interactive Map) was selected because it best addresses the core
+                            requirements of creating a playful and engaging learning experience while maintaining
+                            educational value. This approach:
+                        </p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><strong>Enhances Engagement:</strong> Interactive elements and visual feedback keep
+                                students motivated throughout their journey</li>
+                            <li><strong>Supports Learning:</strong> Clear cause-and-effect relationships help students
+                                understand the impact of their decisions</li>
+                            <li><strong>Reduces Stress:</strong> Game-like mechanics make the complex postgraduate
+                                preparation process feel manageable</li>
+                            <li><strong>Provides Personalization:</strong> Students can explore different paths based on
+                                their individual goals and interests</li>
+                            <li><strong>Offers Meaningful Feedback:</strong> Real-time stat tracking helps students
+                                monitor their progress and adjust their strategies</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <!-- 结局系统 -->
+                <!-- Low-Fi Prototype -->
                 <div class="summary-card fade-in">
-                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue">Ending System</h3>
-                    <div class="bg-gray-100 rounded-lg p-4 mb-4">
-                        <div class="bg-white rounded-lg p-6 text-center">
-                            <div
-                                class="w-24 h-24 rounded-full bg-xjtlu-blue flex items-center justify-center text-white mx-auto mb-4">
-                                <i data-lucide="trophy" class="w-12 h-12"></i>
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="layout" class="w-6 h-6"></i>
+                        Low-Fi Prototype
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Clickable Figma prototype demonstrating core functionality and user flow of XJTLU Journey
+                        Simulator.
+                    </p>
+
+                    <div class="bg-gray-100 rounded-lg p-8 text-center">
+                        <div
+                            class="w-full h-64 bg-white rounded-lg mb-6 flex items-center justify-center border-2 border-dashed border-gray-300">
+                            <div class="text-center">
+                                <i data-lucide="figma" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                                <p class="text-gray-500">Figma Prototype Preview</p>
                             </div>
-                            <h4 class="text-2xl font-bold mb-2">Congratulations!</h4>
-                            <p class="mb-4">
-                                You have successfully received an offer from your dream university!
-                            </p>
-                            <div class="mb-6">
-                                <div class="inline-block bg-xjtlu-blue/10 text-xjtlu-blue px-4 py-2 rounded-full">
-                                    University College London
-                                </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <a href="https://www.figma.com/proto/your-prototype-link" target="_blank"
+                                rel="noopener noreferrer" class="xjtlu-btn xjtlu-btn--primary text-lg px-8 py-4">
+                                <i data-lucide="external-link" class="w-5 h-5"></i>
+                                View Clickable Prototype
+                            </a>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                            <div class="bg-white rounded-lg p-4">
+                                <h5 class="font-bold text-xjtlu-navy mb-2 flex items-center gap-2">
+                                    <i data-lucide="mouse-pointer" class="w-4 h-4"></i>
+                                    Interactive
+                                </h5>
+                                <p class="text-sm text-gray-600">Click through all major screens and user flows</p>
                             </div>
-                            <button class="xjtlu-btn xjtlu-btn--primary">
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                                Play Again
-                            </button>
+                            <div class="bg-white rounded-lg p-4">
+                                <h5 class="font-bold text-xjtlu-navy mb-2 flex items-center gap-2">
+                                    <i data-lucide="smartphone" class="w-4 h-4"></i>
+                                    Responsive
+                                </h5>
+                                <p class="text-sm text-gray-600">Test on different screen sizes and devices</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <h5 class="font-bold text-xjtlu-navy mb-2 flex items-center gap-2">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    Feedback
+                                </h5>
+                                <p class="text-sm text-gray-600">Leave comments and suggestions directly on the
+                                    prototype</p>
+                            </div>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600">
-                        The ending system provides different outcomes based on the player's choices and stats throughout
-                        the game.
-                        Players can receive offers from different universities depending on their academic performance
-                        and extracurricular activities.
-                    </p>
+
+                    <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <h5 class="font-bold text-yellow-800 mb-2 flex items-center gap-2">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            Prototype Notes
+                        </h5>
+                        <p class="text-sm text-yellow-700">
+                            This low-fidelity prototype focuses on core functionality and user flow rather than visual
+                            polish. It demonstrates the key interactions including character creation, campus
+                            exploration, event decisions, and stat tracking. The prototype is designed to gather
+                            feedback on usability and engagement before moving to high-fidelity design and
+                            implementation.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

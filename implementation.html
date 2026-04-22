@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Implementation - XJTLU Journey Simulator</title>
+
+    <!-- Tailwind CSS (Play CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind 主题扩展：注入西浦蓝与亮黄色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // 西浦蓝
+                        'xjtlu-navy': '#003366',
+                        'xjtlu-blue': '#004B9B',
+                        'xjtlu-light': '#1A6DC2',
+                        // 亮黄（高亮 / 警告）
+                        'xjtlu-yellow': '#FFD700',
+                        'xjtlu-amber': '#FFC200',
+                        // 辅助色
+                        'xjtlu-red': '#D93025',
+                        'xjtlu-green': '#1E8A44',
+                        'xjtlu-gray': '#6B7280',
+                    },
+                    fontFamily: {
+                        sans: [
+                            '"Noto Sans SC"',
+                            '"PingFang SC"',
+                            '"Microsoft YaHei"',
+                            'ui-sans-serif',
+                            'system-ui',
+                            'sans-serif',
+                        ],
+                    },
+                    boxShadow: {
+                        'hotspot-active': '0 0 0 4px rgba(0, 75, 155, 0.5)',
+                        'hotspot-warn': '0 0 0 4px rgba(217, 48, 37, 0.5)',
+                    },
+                    keyframes: {
+                        'float-up': {
+                            '0%': { opacity: '1', transform: 'translateY(0px)' },
+                            '100%': { opacity: '0', transform: 'translateY(-48px)' },
+                        },
+                        'danger-pulse': {
+                            '0%, 100%': { 'box-shadow': 'inset 0 0 0px rgba(217,48,37,0)' },
+                            '50%': { 'box-shadow': 'inset 0 0 60px rgba(217,48,37,0.55)' },
+                        },
+                        'stat-bump': {
+                            '0%': { transform: 'scale(1)' },
+                            '40%': { transform: 'scale(1.18)' },
+                            '100%': { transform: 'scale(1)' },
+                        },
+                        'fade-in': {
+                            '0%': { opacity: '0', transform: 'translateY(8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0px)' },
+                        },
+                        'ripple': {
+                            '0%': { transform: 'scale(0)', opacity: '0.6' },
+                            '100%': { transform: 'scale(4)', opacity: '0' },
+                        },
+                    },
+                    animation: {
+                        'float-up': 'float-up 1.2s ease-out forwards',
+                        'danger-pulse': 'danger-pulse 1s ease-in-out infinite',
+                        'stat-bump': 'stat-bump 0.3s ease-out',
+                        'fade-in': 'fade-in 0.4s ease-out',
+                        'ripple': 'ripple 0.6s ease-out',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Google Fonts：Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- 项目全局样式 -->
+    <style>
+        /* 基础重置 */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 115%;
+        }
+
+        /* Lucide 图标全局规范 */
+        .lucide,
+        svg.lucide {
+            stroke-width: 2.5px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        /* 可复用按钮组件 */
+        .xjtlu-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+            border: 2.5px solid transparent;
+            cursor: pointer;
+            transition: background-color 0.15s ease,
+                border-color 0.15s ease,
+                transform 0.1s ease,
+                box-shadow 0.15s ease;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .xjtlu-btn:active {
+            transform: scale(0.96);
+        }
+
+        .xjtlu-btn--primary {
+            background-color: #004B9B;
+            color: #ffffff;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--primary:hover {
+            background-color: #003366;
+            border-color: #003366;
+            box-shadow: 0 4px 14px rgba(0, 75, 155, 0.35);
+        }
+
+        .xjtlu-btn--secondary {
+            background-color: transparent;
+            color: #004B9B;
+            border-color: #004B9B;
+        }
+
+        .xjtlu-btn--secondary:hover {
+            background-color: rgba(0, 75, 155, 0.08);
+        }
+
+        /* 卡片样式 */
+        .summary-card {
+            background: #ffffff;
+            border: 2.5px solid #003366;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 51, 102, 0.12);
+        }
+
+        /* 顶部状态栏 */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.625rem 1.25rem;
+            background-color: #ffffff;
+            border-bottom: 2.5px solid #003366;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* 单个状态项（图标 + 标签 + 进度条/数值） */
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            flex: 1 1 0%;
+            min-width: 0;
+            position: relative;
+        }
+
+        .stat-item__label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #6b7280;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+
+        .stat-item__value {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #003366;
+            min-width: 2rem;
+            text-align: right;
+        }
+
+        /* 血条（进度条组件） */
+        .health-bar {
+            flex: 1 1 0%;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            min-width: 48px;
+        }
+
+        .health-bar__fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.4s ease, background-color 0.3s ease;
+            will-change: width;
+        }
+
+        /* 颜色语义：Mental Health（蓝） */
+        .health-bar__fill--mental {
+            background-color: #004B9B;
+        }
+
+        /* 颜色语义：Physical Health（绿） */
+        .health-bar__fill--physical {
+            background-color: #1E8A44;
+        }
+
+        /* 低值警告（< 20%）：变红 */
+        .health-bar__fill--danger {
+            background-color: #D93025 !important;
+        }
+
+        /* 动画 */
+        @keyframes fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fade-in 0.35s ease-out both;
+        }
+
+        /* 飘字动画 */
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translateY(-12px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-52px);
+            }
+        }
+
+        .floating-text {
+            position: absolute;
+            font-size: 1rem;
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            animation: float-up 1.2s ease-out forwards;
+            z-index: 9999;
+        }
+
+        /* 数值抖动动画 */
+        @keyframes stat-bump {
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.22);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stat-bump {
+            animation: stat-bump 0.3s ease-out;
+        }
+
+        /* 滚动条统一样式 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 75, 155, 0.3);
+            border-radius: 9999px;
+        }
+
+        /* 标签样式 */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            border: 1.5px solid transparent;
+        }
+
+        .tag-badge--blue {
+            background-color: rgba(0, 75, 155, 0.1);
+            border-color: #004B9B;
+            color: #004B9B;
+        }
+
+        .tag-badge--green {
+            background-color: rgba(30, 138, 68, 0.1);
+            border-color: #1E8A44;
+            color: #1E8A44;
+        }
+
+        .tag-badge--yellow {
+            background-color: rgba(255, 215, 0, 0.2);
+            border-color: #FFC200;
+            color: #7a5c00;
+        }
+
+        .tag-badge--red {
+            background-color: rgba(217, 48, 37, 0.1);
+            border-color: #D93025;
+            color: #D93025;
+        }
+
+        /* 地图热区样式 */
+        .map-hotspot {
+            position: absolute;
+            border-radius: 9999px;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: box-shadow 0.2s ease, transform 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-hotspot--action {
+            width: 18px;
+            height: 18px;
+            background-color: #004B9B;
+            border: 2.5px solid #ffffff;
+            box-shadow: 0 0 0 3px #004B9B,
+                0 0 12px rgba(0, 75, 155, 0.5);
+            animation: hotspot-pulse 2.5s ease-in-out infinite;
+        }
+
+        .map-hotspot--action:hover {
+            background-color: #003366;
+            box-shadow: 0 0 0 3px #003366,
+                0 0 20px rgba(0, 75, 155, 0.7);
+            transform: translate(-50%, -50%) scale(1.25);
+        }
+
+        /* 热区脉冲动画 */
+        @keyframes hotspot-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 3px #004B9B, 0 0 8px rgba(0, 75, 155, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 5px #004B9B, 0 0 20px rgba(0, 75, 155, 0.7);
+            }
+        }
+
+        /* 地图 Pin 样式 */
+        .map-pin {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px 4px 6px;
+            border-radius: 9999px;
+            border: 2px solid transparent;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: transform 0.15s ease,
+                box-shadow 0.15s ease;
+            pointer-events: auto;
+            user-select: none;
+            line-height: 1;
+        }
+
+        .map-pin--action {
+            background-color: #004B9B;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 75, 155, 0.5),
+                0 0 0 2px rgba(0, 75, 155, 0.3);
+            animation: pin-pulse 2.5s ease-in-out infinite;
+        }
+
+        .map-pin--action:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+            box-shadow: 0 4px 16px rgba(0, 75, 155, 0.7),
+                0 0 0 3px rgba(0, 75, 155, 0.4);
+            animation: none;
+        }
+
+        /* Pin 脉冲动画 */
+        @keyframes pin-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 2px 8px rgba(0, 75, 155, 0.4), 0 0 0 2px rgba(0, 75, 155, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 2px 16px rgba(0, 75, 155, 0.7), 0 0 0 4px rgba(0, 75, 155, 0.3);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+    <!-- 导航栏 -->
+    <nav class="bg-xjtlu-navy text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                    <h1 class="text-xl font-bold">XJTLU Journey Simulator</h1>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="index.html" class="hover:text-xjtlu-yellow transition-colors">Overview</a>
+                    <a href="requirement.html" class="hover:text-xjtlu-yellow transition-colors">Requirement</a>
+                    <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
+                    <a href="implementation.html"
+                        class="hover:text-xjtlu-yellow transition-colors font-bold">Implementation</a>
+                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors">Evaluation</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Technical Implementation -->
+    <section id="technical" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-xjtlu-navy">
+                Technical Implementation
+            </h2>
+            <div class="max-w-5xl mx-auto space-y-12">
+                <div class="summary-card fade-in">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="server" class="w-6 h-6"></i>System Architecture
+                    </h3>
+                    <div class="bg-gray-100 p-8 rounded-lg">
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                            <div class="text-center">
+                                <div
+                                    class="w-24 h-24 bg-xjtlu-blue rounded-lg flex items-center justify-center text-white mb-2 mx-auto">
+                                    <i data-lucide="globe" class="w-12 h-12"></i>
+                                </div>
+                                <p class="font-bold text-xjtlu-navy">Frontend</p>
+                                <p class="text-sm text-gray-600">HTML/CSS/JS</p>
+                            </div>
+
+                            <div class="text-center">
+                                <div
+                                    class="w-24 h-24 bg-xjtlu-navy rounded-lg flex items-center justify-center text-white mb-2 mx-auto">
+                                    <i data-lucide="database" class="w-12 h-12"></i>
+                                </div>
+                                <p class="font-bold text-xjtlu-navy">Game State</p>
+                                <p class="text-sm text-gray-600">localStorage</p>
+                            </div>
+
+                            <div class="text-center">
+                                <div
+                                    class="w-24 h-24 bg-xjtlu-green rounded-lg flex items-center justify-center text-white mb-2 mx-auto">
+                                    <i data-lucide="cpu" class="w-12 h-12"></i>
+                                </div>
+                                <p class="font-bold text-xjtlu-navy">Engines</p>
+                                <p class="text-sm text-gray-600">Event/Buff/Ending</p>
+                            </div>
+                        </div>
+                        <div class="mt-8 bg-white p-4 rounded-lg">
+                            <p class="text-sm text-gray-700"><strong>Data Flow:</strong> User actions trigger events →
+                                Event Engine processes decisions → Buff Engine updates states → Ending Engine checks
+                                win/lose conditions → UI Manager renders new state</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-card fade-in">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="layout-dashboard" class="w-6 h-6"></i>High-Fi Prototype
+                    </h3>
+                    <div class="bg-gray-100 p-8 rounded-lg text-center">
+                        <i data-lucide="monitor" class="w-16 h-16 text-xjtlu-blue mx-auto mb-4"></i>
+                        <p class="text-gray-700 mb-4">Play the live prototype:</p>
+                        <a href="https://cheese-block.github.io/XJTLU-CPT208-GroupB2-1"
+                            class="xjtlu-btn xjtlu-btn--primary"><i data-lucide="external-link"
+                                class="w-4 h-4"></i>Launch Game</a>
+                    </div>
+                </div>
+
+                <div class="summary-card fade-in">
+                    <h3 class="text-2xl font-bold mb-6 text-xjtlu-blue flex items-center gap-2">
+                        <i data-lucide="users" class="w-6 h-6"></i>Individual Contributions
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-xjtlu-blue text-white">
+                                    <th class="px-4 py-3 text-left">Team Member</th>
+                                    <th class="px-4 py-3 text-left">Student ID</th>
+                                    <th class="px-4 py-3 text-left">Role</th>
+                                    <th class="px-4 py-3 text-left">Contributions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-bold text-xjtlu-navy">Yiguan Zhang</td>
+                                    <td class="px-4 py-3">2362131</td>
+                                    <td class="px-4 py-3"><span class="tag-badge tag-badge--blue">UI Design</span></td>
+                                    <td class="px-4 py-3">Main menu design, campus map UI, status bar components</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-bold text-xjtlu-navy">Wenhan Wang</td>
+                                    <td class="px-4 py-3">2362355</td>
+                                    <td class="px-4 py-3"><span class="tag-badge tag-badge--green">Code</span></td>
+                                    <td class="px-4 py-3">Game engine core, event system, buff mechanics, state
+                                        management</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-bold text-xjtlu-navy">Zewei Li</td>
+                                    <td class="px-4 py-3">2363721</td>
+                                    <td class="px-4 py-3"><span class="tag-badge tag-badge--yellow">Content</span></td>
+                                    <td class="px-4 py-3">Story content, event scenarios, ending definitions, i18n</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-bold text-xjtlu-navy">Juntao He</td>
+                                    <td class="px-4 py-3">2363044</td>
+                                    <td class="px-4 py-3"><span class="tag-badge tag-badge--red">Testing</span></td>
+                                    <td class="px-4 py-3">Usability testing, bug reporting, iteration feedback</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-xjtlu-navy text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    <span class="text-xl font-bold">XJTLU Journey Simulator</span>
+                </div>
+                <div class="flex flex-col items-center md:items-end">
+                    <p class="text-sm opacity-80">© 2026 XJTLU Journey Simulator Team</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 初始化 Lucide 图标 -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
