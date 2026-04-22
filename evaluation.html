@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Survey Statistics - XJTLU Journey Simulator</title>
+    <title>Evaluation - XJTLU Journey Simulator</title>
 
     <!-- Tailwind CSS (Play CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,7 +29,6 @@
                     },
                     fontFamily: {
                         sans: [
-                            '"Noto Sans SC"',
                             '"PingFang SC"',
                             '"Microsoft YaHei"',
                             'ui-sans-serif',
@@ -76,13 +75,7 @@
         };
     </script>
 
-    <!-- Google Fonts：Noto Sans SC -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
-        rel="stylesheet" />
-
-    <!-- Lucide Icons -->
+    <!-- Tailwind 主题扩展：注入西浦蓝与亮黄色 -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
     <!-- Chart.js -->
@@ -398,7 +391,7 @@
                     <a href="requirement.html" class="hover:text-xjtlu-yellow transition-colors">Requirement</a>
                     <a href="prototype.html" class="hover:text-xjtlu-yellow transition-colors">Prototype</a>
                     <a href="implementation.html" class="hover:text-xjtlu-yellow transition-colors">Implementation</a>
-                    <a href="survey.html" class="hover:text-xjtlu-yellow transition-colors font-bold">Evaluation</a>
+                    <a href="evaluation.html" class="hover:text-xjtlu-yellow transition-colors font-bold">Evaluation</a>
                 </div>
             </div>
         </div>
@@ -416,18 +409,20 @@
                         Usability Testing
                     </h3>
                     <p class="text-gray-600 mb-6">
-                        Results from testing our "Alpha" version with 3 real users. Each tester was asked to complete a series of tasks and provide feedback on their experience.
+                        Results from testing our "Alpha" version with 3 real users. Each tester was asked to complete a
+                        series of tasks and provide feedback on their experience.
                     </p>
-                    
+
                     <div class="space-y-6">
                         <!-- Tester 1 -->
                         <div class="border border-gray-200 rounded-lg p-6">
                             <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
+                                <div
+                                    class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
                                     T1
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-xjtlu-navy">Tester 1: Undergraduate Student</h4>
+                                    <h4 class="font-bold text-xjtlu-navy">Tester 1: Sophomore Student</h4>
                                     <p class="text-sm text-gray-600">2nd year Computer Science major</p>
                                 </div>
                             </div>
@@ -443,11 +438,13 @@
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Feedback:</h5>
-                                    <p class="text-gray-600">"The game is fun and engaging. I like how my choices affect the outcome. The campus map is easy to navigate."</p>
+                                    <p class="text-gray-600">"The game is fun and engaging. I like how my choices affect
+                                        the outcome. The campus map is easy to navigate."</p>
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Suggestions:</h5>
-                                    <p class="text-gray-600">"Add more event variety and perhaps some mini-games to make it more interactive."</p>
+                                    <p class="text-gray-600">"Add more event variety and perhaps some mini-games to make
+                                        it more interactive."</p>
                                 </div>
                             </div>
                         </div>
@@ -455,12 +452,13 @@
                         <!-- Tester 2 -->
                         <div class="border border-gray-200 rounded-lg p-6">
                             <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
+                                <div
+                                    class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
                                     T2
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-xjtlu-navy">Tester 2: Graduate Student</h4>
-                                    <p class="text-sm text-gray-600">1st year MSc in Data Science</p>
+                                    <h4 class="font-bold text-xjtlu-navy">Tester 2: Junior Year Student</h4>
+                                    <p class="text-sm text-gray-600">3rd year Information and Computing Science major</p>
                                 </div>
                             </div>
                             <div class="space-y-4">
@@ -475,11 +473,14 @@
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Feedback:</h5>
-                                    <p class="text-gray-600">"The game provides a good overview of the postgraduate preparation process. The stat system is clear and motivating."</p>
+                                    <p class="text-gray-600">"As a junior student, I found the game very relevant to my
+                                        current situation. It's helpful to understand the application process early."
+                                    </p>
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Suggestions:</h5>
-                                    <p class="text-gray-600">"Include more realistic scenarios and perhaps add a timeline feature to help visualize the preparation process."</p>
+                                    <p class="text-gray-600">"Include more realistic scenarios and perhaps add a
+                                        timeline feature to help visualize the preparation process."</p>
                                 </div>
                             </div>
                         </div>
@@ -487,30 +488,34 @@
                         <!-- Tester 3 -->
                         <div class="border border-gray-200 rounded-lg p-6">
                             <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
+                                <div
+                                    class="w-12 h-12 bg-xjtlu-blue rounded-full flex items-center justify-center text-white font-bold">
                                     T3
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-xjtlu-navy">Tester 3: Academic Advisor</h4>
-                                    <p class="text-sm text-gray-600">XJTLU Student Affairs Office</p>
+                                    <h4 class="font-bold text-xjtlu-navy">Tester 3: Parent</h4>
+                                    <p class="text-sm text-gray-600">Parent of a prospective postgraduate student</p>
                                 </div>
                             </div>
                             <div class="space-y-4">
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Tasks Completed:</h5>
                                     <ul class="list-disc list-inside text-gray-600 space-y-1">
-                                        <li>Reviewed game mechanics</li>
-                                        <li>Tested educational content</li>
-                                        <li>Evaluated learning outcomes</li>
+                                        <li>Observed gameplay</li>
+                                        <li>Reviewed educational content</li>
+                                        <li>Evaluated usefulness for child</li>
                                     </ul>
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Feedback:</h5>
-                                    <p class="text-gray-600">"The game effectively communicates the importance of early preparation and balanced skill development. It's a valuable educational tool."</p>
+                                    <p class="text-gray-600">"As a parent, I appreciate how this game helps students
+                                        understand the importance of early planning. It's a great tool for the whole
+                                        family to get involved."</p>
                                 </div>
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Suggestions:</h5>
-                                    <p class="text-gray-600">"Add more specific information about different universities and program requirements to make it more informative."</p>
+                                    <p class="text-gray-600">"Add more specific information about different universities
+                                        and program requirements to make it more informative."</p>
                                 </div>
                             </div>
                         </div>
@@ -524,9 +529,10 @@
                         Iterative Refinement
                     </h3>
                     <p class="text-gray-600 mb-6">
-                        "Before and After" screenshots showing changes made based on user feedback from usability testing.
+                        "Before and After" screenshots showing changes made based on user feedback from usability
+                        testing.
                     </p>
-                    
+
                     <div class="space-y-8">
                         <!-- Refinement 1: Campus Map -->
                         <div>
@@ -535,10 +541,12 @@
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Before:</h5>
                                     <div class="bg-gray-100 rounded-lg p-4">
-                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                        <div
+                                            class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
                                             <div class="text-center">
                                                 <i data-lucide="map" class="w-12 h-12 text-gray-400 mx-auto mb-2"></i>
-                                                <p class="text-gray-500 text-sm">Original map with limited interaction</p>
+                                                <p class="text-gray-500 text-sm">Original map with limited interaction
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -549,10 +557,13 @@
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">After:</h5>
                                     <div class="bg-gray-100 rounded-lg p-4">
-                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                        <div
+                                            class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
                                             <div class="text-center">
-                                                <i data-lucide="map-pin" class="w-12 h-12 text-xjtlu-blue mx-auto mb-2"></i>
-                                                <p class="text-gray-500 text-sm">Enhanced map with interactive hotspots</p>
+                                                <i data-lucide="map-pin"
+                                                    class="w-12 h-12 text-xjtlu-blue mx-auto mb-2"></i>
+                                                <p class="text-gray-500 text-sm">Enhanced map with interactive hotspots
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -570,9 +581,11 @@
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">Before:</h5>
                                     <div class="bg-gray-100 rounded-lg p-4">
-                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                        <div
+                                            class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
                                             <div class="text-center">
-                                                <i data-lucide="message-circle" class="w-12 h-12 text-gray-400 mx-auto mb-2"></i>
+                                                <i data-lucide="message-circle"
+                                                    class="w-12 h-12 text-gray-400 mx-auto mb-2"></i>
                                                 <p class="text-gray-500 text-sm">Simple text-based events</p>
                                             </div>
                                         </div>
@@ -584,10 +597,13 @@
                                 <div>
                                     <h5 class="font-bold text-gray-700 mb-2">After:</h5>
                                     <div class="bg-gray-100 rounded-lg p-4">
-                                        <div class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
+                                        <div
+                                            class="w-full h-64 bg-white rounded-lg flex items-center justify-center border border-gray-300">
                                             <div class="text-center">
-                                                <i data-lucide="activity" class="w-12 h-12 text-xjtlu-blue mx-auto mb-2"></i>
-                                                <p class="text-gray-500 text-sm">Enhanced events with visual feedback</p>
+                                                <i data-lucide="activity"
+                                                    class="w-12 h-12 text-xjtlu-blue mx-auto mb-2"></i>
+                                                <p class="text-gray-500 text-sm">Enhanced events with visual feedback
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -607,20 +623,31 @@
                         Final Reflection
                     </h3>
                     <p class="text-gray-600 mb-6">
-                        A brief discussion on the social/ethical implications of our design and the use of AI in this project.
+                        A brief discussion on the social/ethical implications of our design and the use of AI in this
+                        project.
                     </p>
-                    
+
                     <div class="space-y-6">
                         <!-- Social/Ethical Implications -->
                         <div>
                             <h4 class="font-bold text-xjtlu-navy mb-4">Social/Ethical Implications</h4>
                             <div class="bg-gray-50 rounded-lg p-6">
                                 <ul class="list-disc list-inside text-gray-700 space-y-3">
-                                    <li><strong>Accessibility:</strong> The game is designed to be accessible to all students, regardless of their background or academic standing. We've ensured that the interface is intuitive and the content is clear and understandable.</li>
-                                    <li><strong>Inclusivity:</strong> The game represents a diverse range of student experiences and backgrounds, promoting inclusivity and understanding of different perspectives.</li>
-                                    <li><strong>Mental Health:</strong> We've incorporated elements that emphasize work-life balance and mental well-being, addressing the growing concern of student stress and burnout.</li>
-                                    <li><strong>Educational Equity:</strong> The game provides valuable information about postgraduate preparation that may not be equally accessible to all students, helping to level the playing field.</li>
-                                    <li><strong>Privacy:</strong> All user data is anonymous and used only for improving the game experience, with clear privacy guidelines.</li>
+                                    <li><strong>Accessibility:</strong> The game is designed to be accessible to all
+                                        students, regardless of their background or academic standing. We've ensured
+                                        that the interface is intuitive and the content is clear and understandable.
+                                    </li>
+                                    <li><strong>Inclusivity:</strong> The game represents a diverse range of student
+                                        experiences and backgrounds, promoting inclusivity and understanding of
+                                        different perspectives.</li>
+                                    <li><strong>Mental Health:</strong> We've incorporated elements that emphasize
+                                        work-life balance and mental well-being, addressing the growing concern of
+                                        student stress and burnout.</li>
+                                    <li><strong>Educational Equity:</strong> The game provides valuable information
+                                        about postgraduate preparation that may not be equally accessible to all
+                                        students, helping to level the playing field.</li>
+                                    <li><strong>Privacy:</strong> All user data is anonymous and used only for improving
+                                        the game experience, with clear privacy guidelines.</li>
                                 </ul>
                             </div>
                         </div>
@@ -633,13 +660,22 @@
                                     We utilized generative AI in several aspects of this project:
                                 </p>
                                 <ul class="list-disc list-inside text-gray-700 space-y-3">
-                                    <li><strong>Content Generation:</strong> AI was used to generate event descriptions, dialogue, and scenario variations, ensuring a diverse range of experiences for players.</li>
-                                    <li><strong>Design Assistance:</strong> AI helped in generating UI design ideas and layout suggestions, which were then refined by our team.</li>
-                                    <li><strong>Testing Support:</strong> AI-assisted in creating test scenarios and analyzing user feedback data.</li>
-                                    <li><strong>Educational Content:</strong> AI helped in organizing and presenting complex information about postgraduate preparation in an engaging and accessible way.</li>
+                                    <li><strong>Content Generation:</strong> AI was used to generate event descriptions,
+                                        dialogue, and scenario variations, ensuring a diverse range of experiences for
+                                        players.</li>
+                                    <li><strong>Design Assistance:</strong> AI helped in generating UI design ideas and
+                                        layout suggestions, which were then refined by our team.</li>
+                                    <li><strong>Testing Support:</strong> AI-assisted in creating test scenarios and
+                                        analyzing user feedback data.</li>
+                                    <li><strong>Educational Content:</strong> AI helped in organizing and presenting
+                                        complex information about postgraduate preparation in an engaging and accessible
+                                        way.</li>
                                 </ul>
                                 <p class="text-gray-700 mt-4">
-                                    All AI-generated content was reviewed and edited by our team to ensure accuracy, relevance, and alignment with our educational goals. We were careful to maintain human oversight throughout the development process to ensure the quality and appropriateness of all content.
+                                    All AI-generated content was reviewed and edited by our team to ensure accuracy,
+                                    relevance, and alignment with our educational goals. We were careful to maintain
+                                    human oversight throughout the development process to ensure the quality and
+                                    appropriateness of all content.
                                 </p>
                             </div>
                         </div>
@@ -713,7 +749,6 @@
                         labels: {
                             color: '#003366',
                             font: {
-                                family: 'Noto Sans SC',
                                 size: 12
                             }
                         }
@@ -773,7 +808,6 @@
                         labels: {
                             color: '#003366',
                             font: {
-                                family: 'Noto Sans SC',
                                 size: 12
                             }
                         }
